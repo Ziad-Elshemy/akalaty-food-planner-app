@@ -67,8 +67,7 @@ public class RegisterFragment extends Fragment implements OnRegisterResponse {
 
     private void addAccountToFirebase() {
 
-        myFirebaseAuth.registerToFirebase(viewDataBinding.edtEmail.getEditText().getText().toString(),viewDataBinding.edtPassword.getEditText().getText().toString(),this);
-
+        myFirebaseAuth.registerToFirebase(viewDataBinding.edtEmail.getEditText().getText().toString(), viewDataBinding.edtUsername.getEditText().getText().toString(),viewDataBinding.edtPassword.getEditText().getText().toString(),this);
     }
 
     private boolean validate() {
