@@ -1,0 +1,35 @@
+<resources>
+    <string name="app_name">Akalaty</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="lorem">Discover new recipes and organize your weekly meals with ease</string>
+    <string name="food">Akalaty</string>
+    <string name="onboarding_first_name">Plan Your <font color="#4CAF50">Meals</font> Effortlessly!</string>
+    <string name="onboarding_second_name">Search, Discover, \nAnd <font color="#4CAF50">Enjoy</font> </string>
+    <string name="onboarding_third_name">Save Your <font color="#4CAF50">Favorites</font>  And Stay Organized</string>
+    <string name="food_description">Food Description</string>
+    <string name="video_support">Video Support</string>
+    <string name="onboarding_first_desc">Discover new recipes and organize your weekly meals with ease.</string>
+    <string name="onboarding_second_desc">Find recipes by category, country, or ingredients and get inspired.</string>
+    <string name="onboarding_third_desc">Keep track of your favorite meals and plan your weekly menu hassle-free.</string>
+    <string name="next">Next</string>
+    <string name="get_started">Get Started</string>
+    <string name="type_your_password">Type your password</string>
+    <string name="type_your_email">Type your email</string>
+    <string name="password">Password</string>
+    <string name="email_address">Email address</string>
+    <string name="login">Login</string>
+    <string name="or_login_with">Or, login with</string>
+    <string name="already_have_an_account_login">Already have an account? <font color="#9AD983">Login</font></string>
+    <string name="haven_t_account_register_now">Haven’t account?<font color="#9AD983"> Register now</font></string>
+    <string name="sign_up">Sign Up</string>
+    <string name="user_name">Username</string>
+    <string name="type_your_username">Type Your Username</string>
+    <string name="or_register_with_email">Or, register with email</string>
+    <string name="string_meal_name">String Meal Name</string>
+    <string name="string_meal_category">String Meal Category</string>
+    <string name="category">Category</string>
+    <string name="meal_name">Meal Name</string>
+    <string name="area">Area</string>
+    <string name="ingredient">Ingredient</string>
+</resources>

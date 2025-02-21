@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.carousel.MaskableFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginHorizontal="4dp"
+    android:foreground="?attr/selectableItemBackground"
+    app:shapeAppearance="?attr/shapeAppearanceCornerExtraLarge"
+    >
+
+        <ImageView
+            android:id="@+id/imgCatMealItem"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:transitionName="image"
+            android:scaleType="centerCrop"
+            tools:srcCompat="@tools:sample/avatars" />
+
+        <ImageView
+            android:id="@+id/imgHeartIcon"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginStart="280dp"
+            app:srcCompat="@drawable/ic_heart_gray"
+            />
+
+        <TextView
+            android:id="@+id/txtCatMealName"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:gravity="center"
+            android:textSize="22sp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="4dp"
+            android:textStyle="bold"
+            android:background="@drawable/bg_meal_text_shape"
+            android:textColor="@color/white"
+            android:fontFamily="@font/poppins_regular"
+            android:layout_marginVertical="280dp"
+            tools:text="Test" />
+
+
+
+</com.google.android.material.carousel.MaskableFrameLayout>
