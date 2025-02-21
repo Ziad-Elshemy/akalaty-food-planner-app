@@ -12,11 +12,18 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentSnapshot;
 
 import eg.iti.mad.akalaty.R;
 import eg.iti.mad.akalaty.auth.MyFirebaseAuth;
 import eg.iti.mad.akalaty.auth.OnLoginResponse;
+import eg.iti.mad.akalaty.auth.firestore.FirestoreUtils;
 import eg.iti.mad.akalaty.databinding.FragmentLoginBinding;
+import eg.iti.mad.akalaty.model.AppUser;
 
 
 public class LoginFragment extends Fragment implements OnLoginResponse {
@@ -104,12 +111,38 @@ public class LoginFragment extends Fragment implements OnLoginResponse {
     }
 
     @Override
-    public void setOnLoginResponse(boolean isSuccess, String msg) {
-        if (isSuccess){
-            Log.i(TAG, "setOnLoginResponse: "+msg);
-            Navigation.findNavController(requireView()).navigate(R.id.action_loginFragment_to_homeFragment);
-        }else {
-            Log.i(TAG, "setOnLoginResponse: "+msg);
-        }
+    public void setOnLoginSuccess(String userId) {
+
+            Log.i(TAG, "setOnLoginResponse: "+userId);
+//            Navigation.findNavController(requireView()).navigate(R.id.action_loginFragment_to_homeFragment);
+            checkUserFromFirestore(userId);
+
+    }
+
+    private void checkUserFromFirestore(String userId) {
+        FirestoreUtils.signInWithFirestore(userId,
+                new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        AppUser user = documentSnapshot.toObject(AppUser.class);
+                        // now you can save your user and auto login
+                        if (user == null){
+                            Toast.makeText(requireContext(), "User not in Firestore", Toast.LENGTH_SHORT).show();
+                        }else {
+                            Navigation.findNavController(requireView()).navigate(R.id.action_loginFragment_to_homeFragment);
+                        }
+                    }
+                },
+                new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(requireContext(), "Firestore Failed", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    @Override
+    public void setOnLoginFailure(String msg) {
+        Log.i(TAG, "setOnLoginFailure: "+msg);
     }
 }
