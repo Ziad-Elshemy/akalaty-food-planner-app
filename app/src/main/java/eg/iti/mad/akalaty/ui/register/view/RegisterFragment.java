@@ -1,4 +1,4 @@
-package eg.iti.mad.akalaty.ui.register.controler;
+package eg.iti.mad.akalaty.ui.register.view;
 
 import android.os.Bundle;
 
@@ -16,7 +16,7 @@ import android.view.ViewGroup;
 import eg.iti.mad.akalaty.R;
 import eg.iti.mad.akalaty.auth.MyFirebaseAuth;
 import eg.iti.mad.akalaty.databinding.FragmentRegisterBinding;
-import eg.iti.mad.akalaty.ui.register.view.OnRegisterResponse;
+import eg.iti.mad.akalaty.auth.OnRegisterResponse;
 
 
 public class RegisterFragment extends Fragment implements OnRegisterResponse {

@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 
 import eg.iti.mad.akalaty.R;
 import eg.iti.mad.akalaty.auth.MyFirebaseAuth;
+import eg.iti.mad.akalaty.auth.OnLoginResponse;
 import eg.iti.mad.akalaty.databinding.FragmentLoginBinding;
 
 
