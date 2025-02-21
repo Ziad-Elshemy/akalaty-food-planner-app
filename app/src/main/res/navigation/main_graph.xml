@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_graph"
-    app:startDestination="@id/homeFragment">
+    app:startDestination="@id/loginFragment">
 
     <fragment
         android:id="@+id/myFavFragment"
@@ -44,7 +44,7 @@
     </fragment>
     <fragment
         android:id="@+id/registerFragment"
-        android:name="eg.iti.mad.akalaty.ui.register.controler.RegisterFragment"
+        android:name="eg.iti.mad.akalaty.ui.register.view.RegisterFragment"
         android:label="fragment_register"
         tools:layout="@layout/fragment_register" >
         <action

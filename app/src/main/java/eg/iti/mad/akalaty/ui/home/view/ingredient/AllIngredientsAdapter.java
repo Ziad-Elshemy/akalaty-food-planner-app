@@ -11,6 +11,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.List;
 
 import eg.iti.mad.akalaty.R;
@@ -45,7 +47,10 @@ public class AllIngredientsAdapter extends RecyclerView.Adapter<AllIngredientsAd
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         IngredientsItem categoriesItem = my_list.get(position);
         holder.txtIngredientName.setText(my_list.get(position).getStrIngredient());
-        holder.imgIngredient.setImageResource(R.drawable.favorite_ic);
+        Glide.with(context).load("https://www.themealdb.com/images/ingredients/"+my_list.get(position).getStrIngredient()+"-Small.png")
+                .placeholder(R.drawable.ic_launcher_background)
+                .error(R.drawable.ic_launcher_foreground)
+                .into(holder.imgIngredient);
         holder.layout.setOnClickListener(view -> {
             listener.onIngredientItemClicked(categoriesItem);
         });
