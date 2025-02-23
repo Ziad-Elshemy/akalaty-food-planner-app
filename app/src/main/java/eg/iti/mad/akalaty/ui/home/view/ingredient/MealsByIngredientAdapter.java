@@ -17,7 +17,6 @@ import java.util.List;
 
 import eg.iti.mad.akalaty.R;
 import eg.iti.mad.akalaty.model.FilteredMealsItem;
-import eg.iti.mad.akalaty.ui.home.view.OnHeartClickListener;
 import eg.iti.mad.akalaty.ui.home.view.OnMealClickListener;
 
 
@@ -27,13 +26,11 @@ public class MealsByIngredientAdapter extends RecyclerView.Adapter<MealsByIngred
     private List<FilteredMealsItem> my_list;
     private static final String TAG = "RecyclerView";
     OnMealClickListener listener;
-    OnHeartClickListener onHeartClickListener;
 
-    public MealsByIngredientAdapter(Context context, List<FilteredMealsItem> list, OnMealClickListener onMealClickListener, OnHeartClickListener onHeartClickListener) {
+    public MealsByIngredientAdapter(Context context, List<FilteredMealsItem> list, OnMealClickListener onMealClickListener) {
         this.context = context;
         this.my_list = list;
         this.listener = onMealClickListener;
-        this.onHeartClickListener = onHeartClickListener;
     }
 
     @NonNull
@@ -50,10 +47,7 @@ public class MealsByIngredientAdapter extends RecyclerView.Adapter<MealsByIngred
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         FilteredMealsItem filteredMealsItem = my_list.get(position);
         holder.txtMealName.setText(my_list.get(position).getStrMeal());
-        holder.imgHeart.setOnClickListener(view -> {
-            view.setBackgroundResource(R.drawable.ic_heart_red);
-            onHeartClickListener.onHeartIconClicked(filteredMealsItem);
-        });
+
         Glide.with(context).load(my_list.get(position).getStrMealThumb())
                 .placeholder(R.drawable.ic_launcher_background)
                 .error(R.drawable.ic_launcher_foreground)
@@ -72,7 +66,6 @@ public class MealsByIngredientAdapter extends RecyclerView.Adapter<MealsByIngred
 
     class ViewHolder extends RecyclerView.ViewHolder{
         public ImageView imgMeal;
-        public ImageView imgHeart;
 
         public TextView txtMealName;
 
@@ -82,7 +75,6 @@ public class MealsByIngredientAdapter extends RecyclerView.Adapter<MealsByIngred
             super(view);
             layout = view;
             imgMeal = layout.findViewById(R.id.imgIngredientMealItem);
-            imgHeart = layout.findViewById(R.id.imgHeartIcon);
             txtMealName = layout.findViewById(R.id.txtIngredientMealName);
 
         }

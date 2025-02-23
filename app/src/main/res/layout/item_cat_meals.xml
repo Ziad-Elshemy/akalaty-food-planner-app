@@ -17,15 +17,6 @@
             android:scaleType="centerCrop"
             tools:srcCompat="@tools:sample/avatars" />
 
-        <ImageView
-            android:id="@+id/imgHeartIcon"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginStart="280dp"
-            app:srcCompat="@drawable/ic_heart_gray"
-            />
-
         <TextView
             android:id="@+id/txtCatMealName"
             android:layout_width="match_parent"

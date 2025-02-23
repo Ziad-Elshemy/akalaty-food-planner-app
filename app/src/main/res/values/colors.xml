@@ -7,4 +7,34 @@
     <color name="colorTransparent">#F5F5F5</color>
     <color name="colorGray">#7A7777</color>
 
+    <!-- Primary Colors -->
+    <color name="md_theme_light_primary">#9AD983</color>
+    <color name="md_theme_light_onPrimary">#FFFFFF</color>
+    <color name="md_theme_light_primaryContainer">#CFF0B0</color>
+    <color name="md_theme_light_onPrimaryContainer">#243B1E</color>
+
+    <!-- Secondary Colors -->
+    <color name="md_theme_light_secondary">#6D8F72</color>
+    <color name="md_theme_light_onSecondary">#FFFFFF</color>
+    <color name="md_theme_light_secondaryContainer">#E0F0E4</color>
+    <color name="md_theme_light_onSecondaryContainer">#2D3E31</color>
+
+    <!-- Tertiary Colors -->
+    <color name="md_theme_light_tertiary">#FFD54F</color>
+    <color name="md_theme_light_onTertiary">#5F3700</color>
+    <color name="md_theme_light_tertiaryContainer">#FFE8A1</color>
+    <color name="md_theme_light_onTertiaryContainer">#382100</color>
+
+    <!-- Background & Surface -->
+    <color name="md_theme_light_background">#F5F5F5</color>
+    <color name="md_theme_light_onBackground">#212121</color>
+    <color name="md_theme_light_surface">#FFFFFF</color>
+    <color name="md_theme_light_onSurface">#212121</color>
+
+    <!-- Error Colors -->
+    <color name="md_theme_light_error">#B3261E</color>
+    <color name="md_theme_light_onError">#FFFFFF</color>
+    <color name="md_theme_light_errorContainer">#FCD8D4</color>
+    <color name="md_theme_light_onErrorContainer">#370B06</color>
+
 </resources>

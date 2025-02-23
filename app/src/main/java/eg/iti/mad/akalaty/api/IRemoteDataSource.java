@@ -8,4 +8,6 @@ public interface IRemoteDataSource {
     public void getMealsByAreaId(NetworkCallbackMealsByArea networkCallbackMealsByArea, String areaId);
     public void getAllIngredients(NetworkCallbackAllIngredients networkCallbackAllIngredients);
     public void getMealsByIngredientId(NetworkCallbackMealsByIngredient networkCallbackMealsByIngredients, String ingredientId);
+    public void searchMealsByName(NetworkCallbackSearchMealsByName networkCallbackSearchMealsByName, String mealName);
+    public void getMealById(NetworkCallbackMealById networkCallbackMealById, String mealId);
 }
