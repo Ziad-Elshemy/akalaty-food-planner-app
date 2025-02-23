@@ -32,4 +32,7 @@
     <string name="meal_name">Meal Name</string>
     <string name="area">Area</string>
     <string name="ingredient">Ingredient</string>
+    <string name="search">Search</string>
+    <string name="youtube">Youtube</string>
+    <string name="my_favorites">My Favorites</string>
 </resources>

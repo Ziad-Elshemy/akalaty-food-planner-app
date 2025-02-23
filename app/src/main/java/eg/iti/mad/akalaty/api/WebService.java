@@ -5,9 +5,11 @@ import eg.iti.mad.akalaty.model.CategoriesResponse;
 import eg.iti.mad.akalaty.model.FilteredMealsItem;
 import eg.iti.mad.akalaty.model.FilteredMealsResponse;
 import eg.iti.mad.akalaty.model.IngredientsResponse;
+import eg.iti.mad.akalaty.model.MealDetailsItem;
 import eg.iti.mad.akalaty.model.MealDetailsResponse;
 import eg.iti.mad.akalaty.model.RandomMealResponse;
 import eg.iti.mad.akalaty.model.RandomMealsItem;
+import eg.iti.mad.akalaty.model.SingleMealByIdResponse;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
@@ -22,7 +24,10 @@ public interface WebService {
     Call<IngredientsResponse> getAllIngredients(@Query("i") String ingredientId);
 
     @GET("lookup.php")
-    Call<MealDetailsResponse> getMealDetails(@Query("i") String mealId);
+    Call<SingleMealByIdResponse> getMealDetailsById(@Query("i") String mealId);
+
+    @GET("search.php")
+    Call<MealDetailsResponse> searchMealsByName(@Query("s") String mealName);
 
     @GET("random.php")
     Call<RandomMealResponse> getRandomMealDetails();

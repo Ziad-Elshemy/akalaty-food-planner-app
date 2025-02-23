@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +22,7 @@ import java.util.List;
 
 import eg.iti.mad.akalaty.R;
 import eg.iti.mad.akalaty.api.RemoteDataSource;
+import eg.iti.mad.akalaty.database.MealsLocalDataSource;
 import eg.iti.mad.akalaty.databinding.FragmentHomeBinding;
 import eg.iti.mad.akalaty.model.AreasImages;
 import eg.iti.mad.akalaty.model.AreasItem;
@@ -28,6 +30,7 @@ import eg.iti.mad.akalaty.model.CategoriesItem;
 import eg.iti.mad.akalaty.model.FilteredMealsItem;
 import eg.iti.mad.akalaty.model.IngredientsItem;
 import eg.iti.mad.akalaty.model.RandomMealsItem;
+import eg.iti.mad.akalaty.model.SingleMealItem;
 import eg.iti.mad.akalaty.repo.MealsRepo;
 import eg.iti.mad.akalaty.ui.home.presenter.HomePresenter;
 import eg.iti.mad.akalaty.ui.home.view.area.AllAreasAdapter;
@@ -41,7 +44,7 @@ import eg.iti.mad.akalaty.ui.home.view.ingredient.MealsByIngredientAdapter;
 import eg.iti.mad.akalaty.ui.home.view.ingredient.OnIngredientClickListener;
 
 
-public class HomeFragment extends Fragment implements IViewHomeFragment , OnCategoryClickListener, OnMealClickListener, OnAreaClickListener, OnIngredientClickListener, OnHeartClickListener {
+public class HomeFragment extends Fragment implements IViewHomeFragment , OnCategoryClickListener, OnMealClickListener, OnAreaClickListener, OnIngredientClickListener {
 
 
     FragmentHomeBinding viewDataBinding;
@@ -74,11 +77,11 @@ public class HomeFragment extends Fragment implements IViewHomeFragment , OnCate
         super.onViewCreated(view, savedInstanceState);
 
         allCategoriesAdapter = new AllCategoriesAdapter(getContext(),new ArrayList<>(),this);
-        mealsByCategoryAdapter = new MealsByCategoryAdapter(getContext(),new ArrayList<>(),this,this);
+        mealsByCategoryAdapter = new MealsByCategoryAdapter(getContext(),new ArrayList<>(),this);
         allAreasAdapter = new AllAreasAdapter(getContext(),new ArrayList<>(),this);
-        mealsByAreaAdapter = new MealsByAreaAdapter(getContext(),new ArrayList<>(),this,this);
+        mealsByAreaAdapter = new MealsByAreaAdapter(getContext(),new ArrayList<>(),this);
         allIngredientsAdapter = new AllIngredientsAdapter(getContext(),new ArrayList<>(),this);
-        mealsByIngredientAdapter = new MealsByIngredientAdapter(getContext(),new ArrayList<>(),this,this);
+        mealsByIngredientAdapter = new MealsByIngredientAdapter(getContext(),new ArrayList<>(),this);
 
         viewDataBinding.recyclerViewCatList.setAdapter(allCategoriesAdapter);
         viewDataBinding.recyclerViewMealsByCat.setAdapter(mealsByCategoryAdapter);
@@ -87,7 +90,7 @@ public class HomeFragment extends Fragment implements IViewHomeFragment , OnCate
         viewDataBinding.recyclerViewIngredientList.setAdapter(allIngredientsAdapter);
         viewDataBinding.recyclerViewMealsByIngredient.setAdapter(mealsByIngredientAdapter);
 
-        homePresenter = new HomePresenter(this, MealsRepo.getInstance(RemoteDataSource.getInstance()));
+        homePresenter = new HomePresenter(this, MealsRepo.getInstance(RemoteDataSource.getInstance(), MealsLocalDataSource.getInstance(requireContext())));
 
         homePresenter.getRandomMeal();
         homePresenter.getAllCategories();
@@ -195,6 +198,9 @@ public class HomeFragment extends Fragment implements IViewHomeFragment , OnCate
     @Override
     public void onMealItemClicked(FilteredMealsItem filteredMealsItem) {
         Toast.makeText(requireContext(), ""+filteredMealsItem.getStrMeal(), Toast.LENGTH_SHORT).show();
+        HomeFragmentDirections.ActionHomeFragmentToMealDetailsFragment action = HomeFragmentDirections.actionHomeFragmentToMealDetailsFragment(filteredMealsItem.getIdMeal());
+        Navigation.findNavController(viewDataBinding.getRoot()).navigate(action);
+//        Navigation.findNavController(this).navigate(R.id);
     }
 
     @Override
@@ -202,10 +208,6 @@ public class HomeFragment extends Fragment implements IViewHomeFragment , OnCate
         homePresenter.getMealsByArea(areasItem.getStrArea());
     }
 
-    @Override
-    public void onHeartIconClicked(FilteredMealsItem filteredMealsItem) {
-        Toast.makeText(requireContext(),"added to fav", Toast.LENGTH_SHORT).show();
-    }
 
     @Override
     public void onIngredientItemClicked(IngredientsItem ingredientsItem) {

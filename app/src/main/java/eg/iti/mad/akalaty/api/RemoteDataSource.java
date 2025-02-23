@@ -1,10 +1,15 @@
 package eg.iti.mad.akalaty.api;
 
+import android.util.Log;
+
 import eg.iti.mad.akalaty.model.AreasResponse;
 import eg.iti.mad.akalaty.model.CategoriesResponse;
 import eg.iti.mad.akalaty.model.FilteredMealsResponse;
 import eg.iti.mad.akalaty.model.IngredientsResponse;
+import eg.iti.mad.akalaty.model.MealDetailsItem;
+import eg.iti.mad.akalaty.model.MealDetailsResponse;
 import eg.iti.mad.akalaty.model.RandomMealResponse;
+import eg.iti.mad.akalaty.model.SingleMealByIdResponse;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
@@ -149,6 +154,37 @@ public class RemoteDataSource implements IRemoteDataSource{
             @Override
             public void onFailure(Call<FilteredMealsResponse> call, Throwable throwable) {
                 networkCallbackMealsByIngredients.onFailureMealsByIngredientResult(throwable.getLocalizedMessage());
+            }
+        });
+    }
+
+    @Override
+    public void searchMealsByName(NetworkCallbackSearchMealsByName networkCallbackSearchMealsByName, String mealName) {
+        webService.searchMealsByName(mealName).enqueue(new Callback<MealDetailsResponse>() {
+            @Override
+            public void onResponse(Call<MealDetailsResponse> call, Response<MealDetailsResponse> response) {
+                networkCallbackSearchMealsByName.onSuccessSearchMealsByNameResult(response.body().getMealDetails());
+            }
+
+            @Override
+            public void onFailure(Call<MealDetailsResponse> call, Throwable throwable) {
+                networkCallbackSearchMealsByName.onFailureSearchMealsByNameResult(throwable.getLocalizedMessage());
+            }
+        });
+    }
+
+    @Override
+    public void getMealById(NetworkCallbackMealById networkCallbackMealById, String mealId) {
+        webService.getMealDetailsById(mealId).enqueue(new Callback<SingleMealByIdResponse>() {
+            @Override
+            public void onResponse(Call<SingleMealByIdResponse> call, Response<SingleMealByIdResponse> response) {
+                networkCallbackMealById.onSuccessMealByIdResult(response.body().getSingleMeal().get(0));
+                Log.i("testid", "onResponse: "+response);
+            }
+
+            @Override
+            public void onFailure(Call<SingleMealByIdResponse> call, Throwable throwable) {
+                networkCallbackMealById.onFailureMealByIdResult(throwable.getLocalizedMessage());
             }
         });
     }

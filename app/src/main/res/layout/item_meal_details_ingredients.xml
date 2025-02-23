@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="120dp"
+    android:layout_margin="2dp"
+    android:padding="12dp"
+    app:strokeColor="@color/colorGreen">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/imgIngredientMealDetailsItem"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_marginHorizontal="20dp"
+            android:scaleType="centerCrop"
+            android:padding="2dp"
+            android:layout_marginTop="2dp"
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
+            app:strokeColor="@color/black"
+            app:strokeWidth="0.1dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:srcCompat="@tools:sample/avatars" />
+
+        <TextView
+            android:id="@+id/txtIngredientMealDetailsItemTitle"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:text=""
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            android:layout_marginTop="2dp"
+            app:layout_constraintEnd_toEndOf="@id/imgIngredientMealDetailsItem"
+            app:layout_constraintStart_toStartOf="@id/imgIngredientMealDetailsItem"
+            app:layout_constraintTop_toBottomOf="@id/imgIngredientMealDetailsItem"
+            tools:text="salt" />
+        <TextView
+            android:id="@+id/txtIngredientMealDetailsItemMeasure"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:text=""
+            android:textAlignment="center"
+            android:textColor="@color/colorGray"
+            android:textSize="12sp"
+            android:layout_marginTop="2dp"
+            app:layout_constraintEnd_toEndOf="@id/imgIngredientMealDetailsItem"
+            app:layout_constraintStart_toStartOf="@id/imgIngredientMealDetailsItem"
+            app:layout_constraintTop_toBottomOf="@id/txtIngredientMealDetailsItemTitle"
+            tools:text="4 Tablespoons" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</com.google.android.material.card.MaterialCardView>
