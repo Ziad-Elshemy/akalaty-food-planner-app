@@ -1,11 +1,14 @@
 package eg.iti.mad.akalaty.ui.meal_details.view;
 
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
+import android.annotation.SuppressLint;
+import android.app.DatePickerDialog;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
@@ -15,27 +18,29 @@ import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.CustomTarget;
-import com.bumptech.glide.request.transition.Transition;
+import com.google.android.material.snackbar.Snackbar;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import eg.iti.mad.akalaty.R;
+import eg.iti.mad.akalaty.Utils;
 import eg.iti.mad.akalaty.api.RemoteDataSource;
 import eg.iti.mad.akalaty.database.MealsLocalDataSource;
 import eg.iti.mad.akalaty.databinding.FragmentMealDetailsBinding;
 import eg.iti.mad.akalaty.model.AreasImages;
-import eg.iti.mad.akalaty.model.MealDetailsItem;
+import eg.iti.mad.akalaty.model.PlannedMeal;
 import eg.iti.mad.akalaty.model.SingleMealItem;
 import eg.iti.mad.akalaty.repo.MealsRepo;
 import eg.iti.mad.akalaty.ui.meal_details.presenter.MealDetailsPresenter;
@@ -48,6 +53,9 @@ public class MealDetailsFragment extends Fragment implements IViewMealDetailsFra
     MealDetailsPresenter mealDetailsPresenter;
     MealDetailsIngredientsAdapter mealDetailsIngredientsAdapter;
     MealDetailsInstructionsAdapter mealDetailsInstructionsAdapter;
+
+    boolean isFavorite;
+    Calendar calendar;
 
     private static final String TAG = "MealDetailsFragment";
 
@@ -70,6 +78,7 @@ public class MealDetailsFragment extends Fragment implements IViewMealDetailsFra
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        isFavorite = false;
         mealId = MealDetailsFragmentArgs.fromBundle(getArguments()).getMealId();
         mealDetailsIngredientsAdapter = new MealDetailsIngredientsAdapter(requireContext(),new ArrayList<>());
         mealDetailsInstructionsAdapter = new MealDetailsInstructionsAdapter(requireContext(),new ArrayList<>());
@@ -137,34 +146,67 @@ public class MealDetailsFragment extends Fragment implements IViewMealDetailsFra
 
         setupYoutubeVideo(singleMealItem);
 
-//        //convert image to bitmap to add it to database
-//        Glide.with(this)
-//                .asBitmap()
-//                .load(singleMealItem.getStrMealThumb())
-//                .into(new CustomTarget<Bitmap>() {
-//                    @Override
-//                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-//                        Bitmap bitmap = resource;
-//                        singleMealItem.setImage(bitmap);
-//                    }
-//
-//                    @Override
-//                    public void onLoadCleared(@Nullable Drawable placeholder) {
-//
-//                    }
-//                });
-
-
-
         //add meal to database
         viewDataBinding.icMealDetailsHeart.setOnClickListener(view1 -> {
-            mealDetailsPresenter.addMealToFav(singleMealItem);
+            isFavorite = !isFavorite;
+            if(isFavorite){
+                Utils.showCustomSnackbar(requireView(),"Added to favorite");
+                viewDataBinding.icMealDetailsHeart.setImageResource(R.drawable.ic_heart_red);
+                mealDetailsPresenter.addMealToFav(singleMealItem);
+            }else {
+                viewDataBinding.icMealDetailsHeart.setImageResource(R.drawable.ic_heart_gray);
+                mealDetailsPresenter.deleteMealFromFav(singleMealItem);
+                Utils.showCustomSnackbar(requireView(),"Removed!");
+            }
+
         });
 
+        //add meal to calender
+        viewDataBinding.icMealDetailsCalender.setOnClickListener(view -> {
+            showDatePicker();
+            clearCalenderTime();
+            mealDetailsPresenter.addMealToPlanned(new PlannedMeal(calendar.getTime(),singleMealItem));
+        });
+
+    }
+
+    private void clearCalenderTime() {
+        calendar.clear(Calendar.HOUR);
+        calendar.clear(Calendar.MINUTE);
+        calendar.clear(Calendar.SECOND);
+        calendar.clear(Calendar.MILLISECOND);
+    }
+
+    private void showDatePicker() {
+
+        calendar = Calendar.getInstance();
+
+        DatePickerDialog datePicker = new DatePickerDialog(
+            requireContext(), new DatePickerDialog.OnDateSetListener() {
+                @Override
+                public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                    calendar.set(Calendar.DAY_OF_MONTH,day);
+                    calendar.set(Calendar.MONTH,month);
+                    calendar.set(Calendar.YEAR,year);
+                    Utils.showCustomSnackbar(requireView(),"Added to calender");
+                }
+            },
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH));
+
+        datePicker.getDatePicker().setMinDate(calendar.getTimeInMillis());
+        calendar.add(Calendar.DAY_OF_MONTH, 7);
+        datePicker.getDatePicker().setMaxDate(calendar.getTimeInMillis());
+
+        datePicker.show();
     }
 
     @Override
     public void showErrorMsg(String errorMsg) {
         Toast.makeText(requireContext(), "error meal details", Toast.LENGTH_SHORT).show();
     }
+
+
+
 }

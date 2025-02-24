@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:layout_marginHorizontal="20dp"
+    android:padding="12dp"
+    android:background="@drawable/bg_snackbar_shape"
+    android:elevation="6dp">
+
+    <ImageView
+        android:id="@+id/snackbar_icon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="4dp"
+        android:src="@drawable/ic_logo"
+        app:tint="@android:color/white"/>
+
+    <TextView
+        android:id="@+id/snackbar_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Meal added to favorites!"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/snackbar_action"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:text="Ok"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        android:clickable="true"/>
+</LinearLayout>

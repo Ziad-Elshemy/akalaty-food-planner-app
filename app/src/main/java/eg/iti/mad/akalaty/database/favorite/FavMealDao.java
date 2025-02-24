@@ -1,4 +1,4 @@
-package eg.iti.mad.akalaty.database;
+package eg.iti.mad.akalaty.database.favorite;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;

@@ -21,11 +21,11 @@ public class FavPresenter implements IFavPresenter{
 
     @Override
     public LiveData<List<SingleMealItem>> getStoredMeals() {
-        return _repo.getAllStoredMeals();
+        return _repo.getAllStoredFavMeals();
     }
 
     @Override
     public void deleteFromFav(SingleMealItem singleMealItem) {
-        _repo.deleteProduct(singleMealItem);
+        _repo.deleteMealFromFav(singleMealItem);
     }
 }

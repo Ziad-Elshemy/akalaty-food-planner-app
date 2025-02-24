@@ -46,17 +46,28 @@
                     app:layout_constraintTop_toTopOf="parent"
                     tools:srcCompat="@tools:sample/avatars" />
 
-                <ImageView
+                <ImageButton
                     android:id="@+id/icMealDetailsHeart"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:layout_marginHorizontal="20dp"
                     android:layout_marginVertical="40dp"
-                    android:backgroundTint="@color/white"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:background="@drawable/bg_ic_heart_shape"
+                    app:layout_constraintBottom_toBottomOf="@id/imgMealDetailsImage"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/imgMealDetailsImage"
-                    app:srcCompat="@drawable/ic_heart_red" />
+                    app:srcCompat="@drawable/ic_heart_gray" />
+                <ImageButton
+                    android:id="@+id/icMealDetailsCalender"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginHorizontal="20dp"
+                    android:layout_marginVertical="40dp"
+                    android:background="@drawable/bg_ic_calender_shape"
+                    app:layout_constraintBottom_toBottomOf="@id/imgMealDetailsImage"
+                    app:layout_constraintEnd_toStartOf="@id/icMealDetailsHeart"
+                    app:layout_constraintTop_toBottomOf="@+id/imgMealDetailsImage"
+                    app:srcCompat="@drawable/ic_calendar" />
 
                 <TextView
                     android:id="@+id/txtMealDetailsName"
@@ -81,8 +92,10 @@
                     android:adjustViewBounds="true"
                     android:elevation="2dp"
                     android:scaleType="centerCrop"
+                    android:layout_marginBottom="20dp"
                     app:layout_constraintStart_toStartOf="@id/txtMealDetailsName"
                     app:layout_constraintTop_toBottomOf="@+id/txtMealDetailsName"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
                     tools:srcCompat="@drawable/egyptian"
                     app:strokeColor="@color/colorGreen"
@@ -105,6 +118,7 @@
                     app:layout_constraintVertical_bias="0.516" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.card.MaterialCardView>
+
 
         <TextView
             android:id="@+id/txtMealDetailsIngTitle"
