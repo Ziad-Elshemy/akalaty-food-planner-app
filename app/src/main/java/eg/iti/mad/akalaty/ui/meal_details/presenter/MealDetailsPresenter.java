@@ -2,21 +2,11 @@ package eg.iti.mad.akalaty.ui.meal_details.presenter;
 
 import android.util.Log;
 
-import java.util.List;
-
-import eg.iti.mad.akalaty.api.NetworkCallbackAllAreas;
-import eg.iti.mad.akalaty.api.NetworkCallbackAllCategories;
-import eg.iti.mad.akalaty.api.NetworkCallbackAllIngredients;
 import eg.iti.mad.akalaty.api.NetworkCallbackMealById;
-import eg.iti.mad.akalaty.model.AreasItem;
-import eg.iti.mad.akalaty.model.CategoriesItem;
-import eg.iti.mad.akalaty.model.IngredientsItem;
-import eg.iti.mad.akalaty.model.MealDetailsItem;
+import eg.iti.mad.akalaty.model.PlannedMeal;
 import eg.iti.mad.akalaty.model.SingleMealItem;
 import eg.iti.mad.akalaty.repo.MealsRepo;
 import eg.iti.mad.akalaty.ui.meal_details.view.IViewMealDetailsFragment;
-import eg.iti.mad.akalaty.ui.search.presenter.ISearchPresenter;
-import eg.iti.mad.akalaty.ui.search.view.IViewSearchFragment;
 
 public class MealDetailsPresenter implements IMealDetailsPresenter, NetworkCallbackMealById {
 
@@ -48,7 +38,22 @@ public class MealDetailsPresenter implements IMealDetailsPresenter, NetworkCallb
 
     @Override
     public void addMealToFav(SingleMealItem singleMealItem) {
-        _repo.insertProduct(singleMealItem);
+        _repo.insertMealToFav(singleMealItem);
+    }
+
+    @Override
+    public void deleteMealFromFav(SingleMealItem singleMealItem) {
+        _repo.deleteMealFromFav(singleMealItem);
+    }
+
+    @Override
+    public void addMealToPlanned(PlannedMeal plannedMeal) {
+        _repo.insertMealToPlanned(plannedMeal);
+    }
+
+    @Override
+    public void deleteMealFromPlanned(PlannedMeal plannedMeal) {
+        _repo.deleteMealFromPlanned(plannedMeal);
     }
 
 }

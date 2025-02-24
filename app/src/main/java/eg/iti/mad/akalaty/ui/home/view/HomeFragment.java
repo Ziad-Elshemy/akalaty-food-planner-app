@@ -30,7 +30,6 @@ import eg.iti.mad.akalaty.model.CategoriesItem;
 import eg.iti.mad.akalaty.model.FilteredMealsItem;
 import eg.iti.mad.akalaty.model.IngredientsItem;
 import eg.iti.mad.akalaty.model.RandomMealsItem;
-import eg.iti.mad.akalaty.model.SingleMealItem;
 import eg.iti.mad.akalaty.repo.MealsRepo;
 import eg.iti.mad.akalaty.ui.home.presenter.HomePresenter;
 import eg.iti.mad.akalaty.ui.home.view.area.AllAreasAdapter;

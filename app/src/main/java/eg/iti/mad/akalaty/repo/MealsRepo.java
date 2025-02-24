@@ -16,6 +16,7 @@ import eg.iti.mad.akalaty.api.NetworkCallbackMealsByIngredient;
 import eg.iti.mad.akalaty.api.NetworkCallbackRandom;
 import eg.iti.mad.akalaty.api.RemoteDataSource;
 import eg.iti.mad.akalaty.database.MealsLocalDataSource;
+import eg.iti.mad.akalaty.model.PlannedMeal;
 import eg.iti.mad.akalaty.model.SingleMealItem;
 
 public class MealsRepo implements IMealsRepo{
@@ -78,17 +79,32 @@ public class MealsRepo implements IMealsRepo{
     }
 
     @Override
-    public LiveData<List<SingleMealItem>> getAllStoredMeals() {
+    public LiveData<List<SingleMealItem>> getAllStoredFavMeals() {
         return mealsLocalDataSource.getAllMeals();
     }
 
     @Override
-    public void insertProduct(SingleMealItem singleMealItem) {
+    public void insertMealToFav(SingleMealItem singleMealItem) {
         mealsLocalDataSource.insertMeal(singleMealItem);
     }
 
     @Override
-    public void deleteProduct(SingleMealItem singleMealItem) {
+    public void deleteMealFromFav(SingleMealItem singleMealItem) {
         mealsLocalDataSource.deleteMeal(singleMealItem);
+    }
+
+    @Override
+    public LiveData<List<PlannedMeal>> getAllStoredPlannedMeals() {
+        return mealsLocalDataSource.getAllPlannedMeals();
+    }
+
+    @Override
+    public void insertMealToPlanned(PlannedMeal plannedMeal) {
+        mealsLocalDataSource.insertPlannedMeal(plannedMeal);
+    }
+
+    @Override
+    public void deleteMealFromPlanned(PlannedMeal plannedMeal) {
+        mealsLocalDataSource.deletePlannedMeal(plannedMeal);
     }
 }

@@ -1,24 +1,31 @@
 package eg.iti.mad.akalaty.database;
 
 import android.content.Context;
-import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 
+import java.util.Date;
 import java.util.List;
 
+import eg.iti.mad.akalaty.database.favorite.FavMealDao;
+import eg.iti.mad.akalaty.database.planned.PlannedMealDao;
+import eg.iti.mad.akalaty.model.PlannedMeal;
 import eg.iti.mad.akalaty.model.SingleMealItem;
 
 
 public class MealsLocalDataSource implements IMealsLocalDataSource{
-    FavMealDao dao;
+    FavMealDao favDao;
+    PlannedMealDao plannedDao;
     private static MealsLocalDataSource localDataSource = null;
     private LiveData<List<SingleMealItem>> storedMeal;
+    private LiveData<List<PlannedMeal>> storedPlannedMeal;
 
     public MealsLocalDataSource(Context context){
         MyDatabase db = MyDatabase.getInstance(context);
-        dao = db.getMealDao();
-        storedMeal = dao.getAllMeals();
+        favDao = db.getMealDao();
+        storedMeal = favDao.getAllMeals();
+        plannedDao = db.getPlannedMealDao();
+        storedPlannedMeal = plannedDao.getAllMeals();
     }
 
     public static MealsLocalDataSource getInstance(Context context){
@@ -28,14 +35,14 @@ public class MealsLocalDataSource implements IMealsLocalDataSource{
         return localDataSource;
     }
 
-//    public
 
+    // fav meals
     @Override
     public void insertMeal(SingleMealItem singleMealItem){
         new Thread(new Runnable() {
             @Override
             public void run() {
-                dao.insertMeal(singleMealItem);
+                favDao.insertMeal(singleMealItem);
             }
         }).start();
     }
@@ -45,7 +52,7 @@ public class MealsLocalDataSource implements IMealsLocalDataSource{
         new Thread(new Runnable() {
             @Override
             public void run() {
-                dao.deleteMeal(singleMealItem);
+                favDao.deleteMeal(singleMealItem);
             }
         }).start();
     }
@@ -54,7 +61,39 @@ public class MealsLocalDataSource implements IMealsLocalDataSource{
     public LiveData<List<SingleMealItem>> getAllMeals(){
         return storedMeal;
     }
-    
+
+
+
+    //planned meals
+    @Override
+    public void insertPlannedMeal(PlannedMeal plannedMeal) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                plannedDao.insertMeal(plannedMeal);
+            }
+        }).start();
+    }
+
+    @Override
+    public void deletePlannedMeal(PlannedMeal plannedMeal) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                plannedDao.deleteMeal(plannedMeal);
+            }
+        }).start();
+    }
+
+    @Override
+    public LiveData<List<PlannedMeal>> getAllPlannedMeals() {
+        return storedPlannedMeal;
+    }
+
+    @Override
+    public LiveData<List<PlannedMeal>> getMealByDate(Date date) {
+        return plannedDao.getMealsByDate(date);
+    }
 
 
 }

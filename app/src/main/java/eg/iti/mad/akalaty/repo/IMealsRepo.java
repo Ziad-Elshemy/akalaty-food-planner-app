@@ -12,6 +12,7 @@ import eg.iti.mad.akalaty.api.NetworkCallbackMealsByArea;
 import eg.iti.mad.akalaty.api.NetworkCallbackMealsByCategory;
 import eg.iti.mad.akalaty.api.NetworkCallbackMealsByIngredient;
 import eg.iti.mad.akalaty.api.NetworkCallbackRandom;
+import eg.iti.mad.akalaty.model.PlannedMeal;
 import eg.iti.mad.akalaty.model.SingleMealItem;
 
 public interface IMealsRepo {
@@ -29,9 +30,14 @@ public interface IMealsRepo {
     public void getMealsByIngredient(NetworkCallbackMealsByIngredient networkCallbackMealsByIngredient, String ingredientId);
     public void getMealById(NetworkCallbackMealById networkCallbackMealById, String mealId);
 
-    //local
-    public LiveData<List<SingleMealItem>> getAllStoredMeals();
-    public void insertProduct(SingleMealItem singleMealItem);
-    public void deleteProduct(SingleMealItem singleMealItem);
+    //local fav
+    public LiveData<List<SingleMealItem>> getAllStoredFavMeals();
+    public void insertMealToFav(SingleMealItem singleMealItem);
+    public void deleteMealFromFav(SingleMealItem singleMealItem);
+
+    //planned
+    public LiveData<List<PlannedMeal>> getAllStoredPlannedMeals();
+    public void insertMealToPlanned(PlannedMeal plannedMeal);
+    public void deleteMealFromPlanned(PlannedMeal plannedMeal);
 
 }

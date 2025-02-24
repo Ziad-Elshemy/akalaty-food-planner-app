@@ -14,6 +14,8 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.List;
 
 import eg.iti.mad.akalaty.R;
@@ -46,7 +48,10 @@ public class MyFavAdapter extends RecyclerView.Adapter<MyFavAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         SingleMealItem singleMealItem = my_list.get(position);
-        holder.imgMealImage.setImageResource(R.drawable.canidian);
+        Glide.with(context).load(singleMealItem.getStrMealThumb())
+                .placeholder(R.drawable.ic_launcher_background)
+                .error(R.drawable.ic_launcher_foreground)
+                .into(holder.imgMealImage);
         holder.txtMealName.setText(my_list.get(position).getStrMeal());
         holder.txtMealCat.setText(my_list.get(position).getStrCategory());
         holder.btnRemoveItem.setOnClickListener(view -> {
