@@ -1,43 +1,43 @@
 package eg.iti.mad.akalaty.repo;
 
-import androidx.lifecycle.LiveData;
-
+import java.util.Date;
 import java.util.List;
 
-import eg.iti.mad.akalaty.api.NetworkCallbackAllAreas;
-import eg.iti.mad.akalaty.api.NetworkCallbackAllCategories;
-import eg.iti.mad.akalaty.api.NetworkCallbackAllIngredients;
-import eg.iti.mad.akalaty.api.NetworkCallbackMealById;
-import eg.iti.mad.akalaty.api.NetworkCallbackMealsByArea;
-import eg.iti.mad.akalaty.api.NetworkCallbackMealsByCategory;
-import eg.iti.mad.akalaty.api.NetworkCallbackMealsByIngredient;
-import eg.iti.mad.akalaty.api.NetworkCallbackRandom;
+import eg.iti.mad.akalaty.model.AreasResponse;
+import eg.iti.mad.akalaty.model.CategoriesResponse;
+import eg.iti.mad.akalaty.model.FilteredMealsResponse;
+import eg.iti.mad.akalaty.model.IngredientsResponse;
 import eg.iti.mad.akalaty.model.PlannedMeal;
+import eg.iti.mad.akalaty.model.RandomMealResponse;
+import eg.iti.mad.akalaty.model.SingleMealByIdResponse;
 import eg.iti.mad.akalaty.model.SingleMealItem;
+import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.core.Single;
 
 public interface IMealsRepo {
 
     //remote
-    public void getRandomMeal(NetworkCallbackRandom networkCallbackRandom);
+    public Single<RandomMealResponse> getRandomMeal();
 
-    public void getAllCategories(NetworkCallbackAllCategories networkCallbackAllCategories);
-    public void getMealsByCategory(NetworkCallbackMealsByCategory networkCallbackMealsByCategory, String catId);
+    public Single<CategoriesResponse> getAllCategories();
+    public Single<FilteredMealsResponse> getMealsByCategory(String catId);
 
-    public void getAllAreas(NetworkCallbackAllAreas networkCallbackAllAreas);
-    public void getMealsByArea(NetworkCallbackMealsByArea networkCallbackMealsByArea, String areaId);
+    public Single<AreasResponse> getAllAreas();
+    public Single<FilteredMealsResponse> getMealsByArea(String areaId);
 
-    public void getAllIngredients(NetworkCallbackAllIngredients networkCallbackAllIngredient);
-    public void getMealsByIngredient(NetworkCallbackMealsByIngredient networkCallbackMealsByIngredient, String ingredientId);
-    public void getMealById(NetworkCallbackMealById networkCallbackMealById, String mealId);
+    public Single<IngredientsResponse> getAllIngredients();
+    public Single<FilteredMealsResponse> getMealsByIngredient(String ingredientId);
+    public Single<SingleMealByIdResponse> getMealById(String mealId);
 
     //local fav
-    public LiveData<List<SingleMealItem>> getAllStoredFavMeals();
-    public void insertMealToFav(SingleMealItem singleMealItem);
-    public void deleteMealFromFav(SingleMealItem singleMealItem);
+    public Flowable<List<SingleMealItem>> getAllStoredFavMeals();
+    public Completable insertMealToFav(SingleMealItem singleMealItem);
+    public Completable deleteMealFromFav(SingleMealItem singleMealItem);
 
     //planned
-    public LiveData<List<PlannedMeal>> getAllStoredPlannedMeals();
-    public void insertMealToPlanned(PlannedMeal plannedMeal);
-    public void deleteMealFromPlanned(PlannedMeal plannedMeal);
+    public Flowable<List<PlannedMeal>> getPlannedMealsByDate(Date date);
+    public Completable insertMealToPlanned(PlannedMeal plannedMeal);
+    public Completable deleteMealFromPlanned(PlannedMeal plannedMeal);
 
 }

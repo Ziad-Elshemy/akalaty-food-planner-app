@@ -57,22 +57,13 @@ public class MyFavFragment extends Fragment implements IViewMyFavFragment, OnRem
         myFavAdapter = new MyFavAdapter(requireContext(),new ArrayList<>(),this);
         viewDataBinding.myFavRecyclerView.setAdapter(myFavAdapter);
         favPresenter = new FavPresenter(this, MealsRepo.getInstance(RemoteDataSource.getInstance(), MealsLocalDataSource.getInstance(requireContext())));
-
-
-        LiveData<List<SingleMealItem>> mealsList = favPresenter.getStoredMeals();
-        mealsList.observe(getViewLifecycleOwner(), new Observer<List<SingleMealItem>>() {
-            @Override
-            public void onChanged(List<SingleMealItem> singleMealItems) {
-                myFavAdapter.changeData(singleMealItems);
-            }
-        });
-
+        favPresenter.getStoredMeals();
 
     }
 
     @Override
-    public void showFavMeals(LiveData<List<SingleMealItem>> mealsList) {
-        Toast.makeText(requireContext(), "Data Fetched", Toast.LENGTH_SHORT).show();
+    public void showFavMeals(List<SingleMealItem> mealsList) {
+        myFavAdapter.changeData(mealsList);
     }
 
     @Override

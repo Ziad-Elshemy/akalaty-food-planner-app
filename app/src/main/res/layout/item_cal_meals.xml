@@ -15,7 +15,7 @@
         android:layout_height="wrap_content">
 
         <ImageView
-            android:id="@+id/imgFavMealItemImage"
+            android:id="@+id/imgCalMealItemImage"
             android:layout_width="120dp"
             android:layout_height="120dp"
             android:scaleType="centerCrop"
@@ -25,7 +25,7 @@
 
 
         <TextView
-            android:id="@+id/txtFavMealItemName"
+            android:id="@+id/txtCalMealItemName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
@@ -34,15 +34,15 @@
             android:padding="5dp"
             android:textColor="@color/black"
             android:textSize="20sp"
-            app:layout_constraintBottom_toTopOf="@+id/txtFavMealItemCat"
-            app:layout_constraintEnd_toStartOf="@id/btnRemoveFavMeal"
+            app:layout_constraintBottom_toTopOf="@+id/txtCalMealItemCat"
+            app:layout_constraintEnd_toStartOf="@id/btnRemoveCalMeal"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@id/imgFavMealItemImage"
+            app:layout_constraintStart_toEndOf="@id/imgCalMealItemImage"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Name" />
 
         <TextView
-            android:id="@+id/txtFavMealItemCat"
+            android:id="@+id/txtCalMealItemCat"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
@@ -53,14 +53,14 @@
             android:textSize="16sp"
             android:textStyle="italic"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/btnRemoveFavMeal"
+            app:layout_constraintEnd_toStartOf="@id/btnRemoveCalMeal"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@id/imgFavMealItemImage"
-            app:layout_constraintTop_toBottomOf="@+id/txtFavMealItemName"
+            app:layout_constraintStart_toEndOf="@id/imgCalMealItemImage"
+            app:layout_constraintTop_toBottomOf="@+id/txtCalMealItemName"
             tools:text="Name" />
 
         <ImageButton
-            android:id="@+id/btnRemoveFavMeal"
+            android:id="@+id/btnRemoveCalMeal"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:background="@color/md_theme_light_error"

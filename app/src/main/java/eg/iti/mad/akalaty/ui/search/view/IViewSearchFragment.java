@@ -17,6 +17,12 @@ public interface IViewSearchFragment {
     void showAllIngredients(List<IngredientsItem> ingredientsItemList);
 
 
+    void showMealsByCategory(List<FilteredMealsItem> filteredMealsItems);
+
+
     void showErrorMsg(String errorMsg);
 
+    void showMealsByArea(List<FilteredMealsItem> filteredMealsItems);
+
+    void showMealsByIngredient(List<FilteredMealsItem> filteredMealsItems);
 }

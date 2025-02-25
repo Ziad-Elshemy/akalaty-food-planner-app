@@ -1,4 +1,4 @@
-package eg.iti.mad.akalaty;
+package eg.iti.mad.akalaty.utils;
 
 import android.annotation.SuppressLint;
 import android.graphics.Color;
@@ -7,6 +7,8 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.google.android.material.snackbar.Snackbar;
+
+import eg.iti.mad.akalaty.R;
 
 public class Utils {
 

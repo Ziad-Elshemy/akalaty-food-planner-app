@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.bumptech.glide.Glide;
 
 import java.util.List;
@@ -47,7 +48,9 @@ public class AllAreasAdapter extends RecyclerView.Adapter<AllAreasAdapter.ViewHo
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         AreasItem categoriesItem = my_list.get(position);
         holder.txtAreaName.setText(my_list.get(position).getStrArea());
+        holder.lottieAnimationView.setVisibility(View.VISIBLE);
         holder.imgArea.setImageResource(AreasImages.getAreaByName(my_list.get(position).getStrArea()));
+        holder.lottieAnimationView.setVisibility(View.GONE);
         holder.layout.setOnClickListener(view -> {
             listener.onAreaItemClicked(categoriesItem);
         });
@@ -63,6 +66,7 @@ public class AllAreasAdapter extends RecyclerView.Adapter<AllAreasAdapter.ViewHo
     class ViewHolder extends RecyclerView.ViewHolder{
         public ImageView imgArea;
         public TextView txtAreaName;
+        public LottieAnimationView lottieAnimationView;
 
         public View layout;
 
@@ -71,6 +75,7 @@ public class AllAreasAdapter extends RecyclerView.Adapter<AllAreasAdapter.ViewHo
             layout = view;
             imgArea = layout.findViewById(R.id.imgAreaItem);
             txtAreaName = layout.findViewById(R.id.txtAreaItem);
+            lottieAnimationView = layout.findViewById(R.id.lottieAnimationView);
 
         }
 

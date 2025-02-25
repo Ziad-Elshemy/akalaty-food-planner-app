@@ -2,6 +2,7 @@ package eg.iti.mad.akalaty.ui.home.view;
 
 import static androidx.navigation.Navigation.findNavController;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -16,9 +17,14 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import eg.iti.mad.akalaty.R;
 import eg.iti.mad.akalaty.api.RemoteDataSource;
@@ -41,6 +47,11 @@ import eg.iti.mad.akalaty.ui.home.view.category.OnCategoryClickListener;
 import eg.iti.mad.akalaty.ui.home.view.ingredient.AllIngredientsAdapter;
 import eg.iti.mad.akalaty.ui.home.view.ingredient.MealsByIngredientAdapter;
 import eg.iti.mad.akalaty.ui.home.view.ingredient.OnIngredientClickListener;
+import eg.iti.mad.akalaty.utils.NetworkUtils;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 
 public class HomeFragment extends Fragment implements IViewHomeFragment , OnCategoryClickListener, OnMealClickListener, OnAreaClickListener, OnIngredientClickListener {
@@ -55,6 +66,7 @@ public class HomeFragment extends Fragment implements IViewHomeFragment , OnCate
     MealsByAreaAdapter mealsByAreaAdapter;
     AllIngredientsAdapter allIngredientsAdapter;
     MealsByIngredientAdapter mealsByIngredientAdapter;
+    private final CompositeDisposable disposables = new CompositeDisposable();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -74,6 +86,8 @@ public class HomeFragment extends Fragment implements IViewHomeFragment , OnCate
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        observeInternetStatus();
 
         allCategoriesAdapter = new AllCategoriesAdapter(getContext(),new ArrayList<>(),this);
         mealsByCategoryAdapter = new MealsByCategoryAdapter(getContext(),new ArrayList<>(),this);
@@ -100,10 +114,6 @@ public class HomeFragment extends Fragment implements IViewHomeFragment , OnCate
         homePresenter.getMealsByIngredient("chicken_breast");
 
 
-        viewDataBinding.imgMealDetails.setOnClickListener(view1 -> {
-
-
-        });
 
 //        //test getAllCategories api
 //        RemoteDataSource.getApis().getAllCategories().enqueue(new Callback<CategoriesResponse>() {
@@ -135,18 +145,71 @@ public class HomeFragment extends Fragment implements IViewHomeFragment , OnCate
 //        //test getMealDetails api
 //        RemoteDataSource.getInstance().getRandomMeal(this);
 
+    }
 
+    private void observeInternetStatus() {
+        disposables.add(
+                Observable.interval(0, 1, TimeUnit.SECONDS)
+                        .subscribeOn(Schedulers.io())
+                        .map(tick -> NetworkUtils.isInternetAvailable(requireContext()))
+                        .distinctUntilChanged()
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(this::updateUi)
+        );
+    }
+    private void updateUi(boolean isConnected) {
+        if (isConnected) {
+            viewDataBinding.imgNoInternet.setVisibility(View.GONE);
+            viewDataBinding.homeScene.setVisibility(View.VISIBLE);
+            homePresenter.getRandomMeal();
+            homePresenter.getAllCategories();
+            homePresenter.getMealsByCategory("Beef");
+            homePresenter.getAllAreas();
+            homePresenter.getMealsByArea("American");
+            homePresenter.getAllIngredient();
+            homePresenter.getMealsByIngredient("chicken_breast");
+        } else {
+            viewDataBinding.imgNoInternet.setVisibility(View.VISIBLE);
+            viewDataBinding.homeScene.setVisibility(View.GONE);
+        }
+    }
 
-
-
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        disposables.clear();
     }
 
 
     @Override
     public void showRandomMeal(RandomMealsItem randomMealsItem) {
+
+        viewDataBinding.imgRandomMeal.setOnClickListener(view -> {
+            HomeFragmentDirections.ActionHomeFragmentToMealDetailsFragment action = HomeFragmentDirections.actionHomeFragmentToMealDetailsFragment(randomMealsItem.getIdMeal());
+            Navigation.findNavController(viewDataBinding.getRoot()).navigate(action);
+        });
+        viewDataBinding.imgMealDetails.setOnClickListener(view -> {
+            HomeFragmentDirections.ActionHomeFragmentToMealDetailsFragment action = HomeFragmentDirections.actionHomeFragmentToMealDetailsFragment(randomMealsItem.getIdMeal());
+            Navigation.findNavController(viewDataBinding.getRoot()).navigate(action);
+        });
+
         Toast.makeText(getContext(), "getRandomMealDetails onResponse", Toast.LENGTH_SHORT).show();
+        viewDataBinding.lottieAnimationView.setVisibility(View.VISIBLE);
         Glide.with(requireActivity()).load(randomMealsItem.getStrMealThumb())
-                .placeholder(R.drawable.ic_launcher_background)
+                .listener(new RequestListener<Drawable>() {
+                    @Override
+                    public boolean onLoadFailed(@Nullable GlideException e, @Nullable Object model, @NonNull Target<Drawable> target, boolean isFirstResource) {
+                        viewDataBinding.lottieAnimationView.setVisibility(View.GONE);
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(@NonNull Drawable resource, @NonNull Object model, Target<Drawable> target, @NonNull DataSource dataSource, boolean isFirstResource) {
+                        viewDataBinding.lottieAnimationView.setVisibility(View.GONE);
+                        return false;
+                    }
+                })
+//                .placeholder(R.drawable.ic_launcher_background)
                 .error(R.drawable.ic_launcher_foreground)
                 .into(viewDataBinding.imgRandomMeal);
         viewDataBinding.imgMealArea.setImageResource(AreasImages.getAreaByName(randomMealsItem.getStrArea()));

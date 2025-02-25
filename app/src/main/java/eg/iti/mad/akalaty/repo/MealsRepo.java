@@ -2,22 +2,22 @@ package eg.iti.mad.akalaty.repo;
 
 import android.util.Log;
 
-import androidx.lifecycle.LiveData;
-
+import java.util.Date;
 import java.util.List;
 
-import eg.iti.mad.akalaty.api.NetworkCallbackAllAreas;
-import eg.iti.mad.akalaty.api.NetworkCallbackAllCategories;
-import eg.iti.mad.akalaty.api.NetworkCallbackAllIngredients;
-import eg.iti.mad.akalaty.api.NetworkCallbackMealById;
-import eg.iti.mad.akalaty.api.NetworkCallbackMealsByArea;
-import eg.iti.mad.akalaty.api.NetworkCallbackMealsByCategory;
-import eg.iti.mad.akalaty.api.NetworkCallbackMealsByIngredient;
-import eg.iti.mad.akalaty.api.NetworkCallbackRandom;
 import eg.iti.mad.akalaty.api.RemoteDataSource;
 import eg.iti.mad.akalaty.database.MealsLocalDataSource;
+import eg.iti.mad.akalaty.model.AreasResponse;
+import eg.iti.mad.akalaty.model.CategoriesResponse;
+import eg.iti.mad.akalaty.model.FilteredMealsResponse;
+import eg.iti.mad.akalaty.model.IngredientsResponse;
 import eg.iti.mad.akalaty.model.PlannedMeal;
+import eg.iti.mad.akalaty.model.RandomMealResponse;
+import eg.iti.mad.akalaty.model.SingleMealByIdResponse;
 import eg.iti.mad.akalaty.model.SingleMealItem;
+import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.core.Single;
 
 public class MealsRepo implements IMealsRepo{
     RemoteDataSource remoteDataSource;
@@ -37,74 +37,84 @@ public class MealsRepo implements IMealsRepo{
         return repo;
     }
 
+
+
+    //remote
     @Override
-    public void getRandomMeal(NetworkCallbackRandom networkCallbackRandom) {
-        remoteDataSource.getRandomMeal(networkCallbackRandom);
+    public Single<RandomMealResponse> getRandomMeal() {
+        return remoteDataSource.getRandomMeal();
     }
 
     @Override
-    public void getAllCategories(NetworkCallbackAllCategories networkCallbackAllCategories) {
-        remoteDataSource.getAllCategories(networkCallbackAllCategories);
+    public Single<CategoriesResponse> getAllCategories() {
+        return remoteDataSource.getAllCategories();
+
     }
 
     @Override
-    public void getMealsByCategory(NetworkCallbackMealsByCategory networkCallbackMealsByCategory, String catId) {
-        remoteDataSource.getMealsByCategoryId(networkCallbackMealsByCategory,catId);
+    public Single<FilteredMealsResponse> getMealsByCategory(String catId) {
+        return  remoteDataSource.getMealsByCategoryId(catId);
+
     }
 
     @Override
-    public void getAllAreas(NetworkCallbackAllAreas networkCallbackAllAreas) {
-        remoteDataSource.getAllAreas(networkCallbackAllAreas);
+    public Single<AreasResponse> getAllAreas() {
+        return remoteDataSource.getAllAreas();
     }
 
     @Override
-    public void getMealsByArea(NetworkCallbackMealsByArea networkCallbackMealsByArea, String areaId) {
-        remoteDataSource.getMealsByAreaId(networkCallbackMealsByArea, areaId);
+    public Single<FilteredMealsResponse> getMealsByArea(String areaId) {
+        return remoteDataSource.getMealsByAreaId(areaId);
     }
 
     @Override
-    public void getAllIngredients(NetworkCallbackAllIngredients networkCallbackAllIngredient) {
-        remoteDataSource.getAllIngredients(networkCallbackAllIngredient);
+    public Single<IngredientsResponse> getAllIngredients() {
+        return  remoteDataSource.getAllIngredients();
     }
 
     @Override
-    public void getMealsByIngredient(NetworkCallbackMealsByIngredient networkCallbackMealsByIngredient, String ingredientId) {
-        remoteDataSource.getMealsByIngredientId(networkCallbackMealsByIngredient,ingredientId);
+    public Single<FilteredMealsResponse> getMealsByIngredient(String ingredientId) {
+        return remoteDataSource.getMealsByIngredientId(ingredientId);
     }
 
     @Override
-    public void getMealById(NetworkCallbackMealById networkCallbackMealById, String mealId) {
+    public Single<SingleMealByIdResponse> getMealById(String mealId) {
         Log.i("testid", "getMealById: "+mealId);
-        remoteDataSource.getMealById(networkCallbackMealById,mealId);
+        return remoteDataSource.getMealById(mealId);
     }
 
+
+
+
+
+    // local
     @Override
-    public LiveData<List<SingleMealItem>> getAllStoredFavMeals() {
+    public Flowable<List<SingleMealItem>> getAllStoredFavMeals() {
         return mealsLocalDataSource.getAllMeals();
     }
 
     @Override
-    public void insertMealToFav(SingleMealItem singleMealItem) {
-        mealsLocalDataSource.insertMeal(singleMealItem);
+    public Completable insertMealToFav(SingleMealItem singleMealItem) {
+        return mealsLocalDataSource.insertMeal(singleMealItem);
     }
 
     @Override
-    public void deleteMealFromFav(SingleMealItem singleMealItem) {
-        mealsLocalDataSource.deleteMeal(singleMealItem);
+    public Completable deleteMealFromFav(SingleMealItem singleMealItem) {
+        return mealsLocalDataSource.deleteMeal(singleMealItem);
     }
 
     @Override
-    public LiveData<List<PlannedMeal>> getAllStoredPlannedMeals() {
-        return mealsLocalDataSource.getAllPlannedMeals();
+    public Flowable<List<PlannedMeal>> getPlannedMealsByDate(Date date) {
+        return mealsLocalDataSource.getMealByDate(date);
     }
 
     @Override
-    public void insertMealToPlanned(PlannedMeal plannedMeal) {
-        mealsLocalDataSource.insertPlannedMeal(plannedMeal);
+    public Completable insertMealToPlanned(PlannedMeal plannedMeal) {
+        return mealsLocalDataSource.insertPlannedMeal(plannedMeal);
     }
 
     @Override
-    public void deleteMealFromPlanned(PlannedMeal plannedMeal) {
-        mealsLocalDataSource.deletePlannedMeal(plannedMeal);
+    public Completable deleteMealFromPlanned(PlannedMeal plannedMeal) {
+        return mealsLocalDataSource.deletePlannedMeal(plannedMeal);
     }
 }
