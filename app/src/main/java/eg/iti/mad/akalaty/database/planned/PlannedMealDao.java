@@ -11,21 +11,23 @@ import java.util.Date;
 import java.util.List;
 
 import eg.iti.mad.akalaty.model.PlannedMeal;
+import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Flowable;
 
 
 @Dao
 public interface PlannedMealDao {
 
     @Query("select * from planned_meals_table")
-    LiveData<List<PlannedMeal>> getAllMeals();
+    Flowable<List<PlannedMeal>> getAllMeals();
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    void insertMeal(PlannedMeal plannedMeal);
+    Completable insertMeal(PlannedMeal plannedMeal);
 
     @Delete
-    void deleteMeal(PlannedMeal plannedMeal);
+    Completable deleteMeal(PlannedMeal plannedMeal);
 
     @Query("select * from planned_meals_table where date = :date")
-    LiveData<List<PlannedMeal>> getMealsByDate(Date date);
+    Flowable<List<PlannedMeal>> getMealsByDate(Date date);
 
 }

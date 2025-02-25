@@ -10,18 +10,20 @@ import androidx.room.Query;
 import java.util.List;
 
 import eg.iti.mad.akalaty.model.SingleMealItem;
+import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Flowable;
 
 
 @Dao
 public interface FavMealDao {
 
     @Query("select * from meals_table")
-    LiveData<List<SingleMealItem>> getAllMeals();
+    Flowable<List<SingleMealItem>> getAllMeals();
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    void insertMeal(SingleMealItem singleMealItem);
+    Completable insertMeal(SingleMealItem singleMealItem);
 
     @Delete
-    void deleteMeal(SingleMealItem singleMealItem);
+    Completable deleteMeal(SingleMealItem singleMealItem);
 
 }

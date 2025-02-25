@@ -8,7 +8,7 @@ import eg.iti.mad.akalaty.model.SingleMealItem;
 
 public interface IFavPresenter {
 
-    public LiveData<List<SingleMealItem>> getStoredMeals();
+    public void getStoredMeals();
     public void deleteFromFav(SingleMealItem singleMealItem);
 
 }

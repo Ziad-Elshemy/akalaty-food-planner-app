@@ -1,6 +1,7 @@
 package eg.iti.mad.akalaty.ui.home.view.ingredient;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,9 +10,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 
 import java.util.List;
 
@@ -47,9 +54,21 @@ public class MealsByIngredientAdapter extends RecyclerView.Adapter<MealsByIngred
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         FilteredMealsItem filteredMealsItem = my_list.get(position);
         holder.txtMealName.setText(my_list.get(position).getStrMeal());
-
+        holder.lottieAnimationView.setVisibility(View.VISIBLE);
         Glide.with(context).load(my_list.get(position).getStrMealThumb())
-                .placeholder(R.drawable.ic_launcher_background)
+                .listener(new RequestListener<Drawable>() {
+                    @Override
+                    public boolean onLoadFailed(@Nullable GlideException e, @Nullable Object model, @NonNull Target<Drawable> target, boolean isFirstResource) {
+                        holder.lottieAnimationView.setVisibility(View.GONE);
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(@NonNull Drawable resource, @NonNull Object model, Target<Drawable> target, @NonNull DataSource dataSource, boolean isFirstResource) {
+                        holder.lottieAnimationView.setVisibility(View.GONE);
+                        return false;
+                    }
+                })
                 .error(R.drawable.ic_launcher_foreground)
                 .into(holder.imgMeal);
         holder.layout.setOnClickListener(view -> {
@@ -69,6 +88,8 @@ public class MealsByIngredientAdapter extends RecyclerView.Adapter<MealsByIngred
 
         public TextView txtMealName;
 
+        public LottieAnimationView lottieAnimationView;
+
         public View layout;
 
         public ViewHolder(View view){
@@ -76,7 +97,7 @@ public class MealsByIngredientAdapter extends RecyclerView.Adapter<MealsByIngred
             layout = view;
             imgMeal = layout.findViewById(R.id.imgIngredientMealItem);
             txtMealName = layout.findViewById(R.id.txtIngredientMealName);
-
+            lottieAnimationView = layout.findViewById(R.id.lottieAnimationView);
         }
 
     }

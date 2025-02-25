@@ -11,14 +11,16 @@ import eg.iti.mad.akalaty.database.favorite.FavMealDao;
 import eg.iti.mad.akalaty.database.planned.PlannedMealDao;
 import eg.iti.mad.akalaty.model.PlannedMeal;
 import eg.iti.mad.akalaty.model.SingleMealItem;
+import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Flowable;
 
 
 public class MealsLocalDataSource implements IMealsLocalDataSource{
     FavMealDao favDao;
     PlannedMealDao plannedDao;
     private static MealsLocalDataSource localDataSource = null;
-    private LiveData<List<SingleMealItem>> storedMeal;
-    private LiveData<List<PlannedMeal>> storedPlannedMeal;
+    private Flowable<List<SingleMealItem>> storedMeal;
+    private Flowable<List<PlannedMeal>> storedPlannedMeal;
 
     public MealsLocalDataSource(Context context){
         MyDatabase db = MyDatabase.getInstance(context);
@@ -38,27 +40,17 @@ public class MealsLocalDataSource implements IMealsLocalDataSource{
 
     // fav meals
     @Override
-    public void insertMeal(SingleMealItem singleMealItem){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                favDao.insertMeal(singleMealItem);
-            }
-        }).start();
+    public Completable insertMeal(SingleMealItem singleMealItem){
+        return favDao.insertMeal(singleMealItem);
     }
 
     @Override
-    public void deleteMeal(SingleMealItem singleMealItem){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                favDao.deleteMeal(singleMealItem);
-            }
-        }).start();
+    public Completable deleteMeal(SingleMealItem singleMealItem){
+        return favDao.deleteMeal(singleMealItem);
     }
 
     @Override
-    public LiveData<List<SingleMealItem>> getAllMeals(){
+    public Flowable<List<SingleMealItem>> getAllMeals(){
         return storedMeal;
     }
 
@@ -66,32 +58,22 @@ public class MealsLocalDataSource implements IMealsLocalDataSource{
 
     //planned meals
     @Override
-    public void insertPlannedMeal(PlannedMeal plannedMeal) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                plannedDao.insertMeal(plannedMeal);
-            }
-        }).start();
+    public Completable insertPlannedMeal(PlannedMeal plannedMeal) {
+        return plannedDao.insertMeal(plannedMeal);
     }
 
     @Override
-    public void deletePlannedMeal(PlannedMeal plannedMeal) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                plannedDao.deleteMeal(plannedMeal);
-            }
-        }).start();
+    public Completable deletePlannedMeal(PlannedMeal plannedMeal) {
+        return plannedDao.deleteMeal(plannedMeal);
     }
 
     @Override
-    public LiveData<List<PlannedMeal>> getAllPlannedMeals() {
+    public Flowable<List<PlannedMeal>> getAllPlannedMeals() {
         return storedPlannedMeal;
     }
 
     @Override
-    public LiveData<List<PlannedMeal>> getMealByDate(Date date) {
+    public Flowable<List<PlannedMeal>> getMealByDate(Date date) {
         return plannedDao.getMealsByDate(date);
     }
 

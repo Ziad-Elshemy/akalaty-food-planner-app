@@ -1,14 +1,10 @@
 package eg.iti.mad.akalaty.ui.meal_details.view;
 
-import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
-import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
@@ -19,11 +15,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.google.android.material.snackbar.Snackbar;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
 
@@ -31,11 +25,10 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import eg.iti.mad.akalaty.R;
-import eg.iti.mad.akalaty.Utils;
+import eg.iti.mad.akalaty.utils.Utils;
 import eg.iti.mad.akalaty.api.RemoteDataSource;
 import eg.iti.mad.akalaty.database.MealsLocalDataSource;
 import eg.iti.mad.akalaty.databinding.FragmentMealDetailsBinding;
@@ -150,9 +143,9 @@ public class MealDetailsFragment extends Fragment implements IViewMealDetailsFra
         viewDataBinding.icMealDetailsHeart.setOnClickListener(view1 -> {
             isFavorite = !isFavorite;
             if(isFavorite){
-                Utils.showCustomSnackbar(requireView(),"Added to favorite");
                 viewDataBinding.icMealDetailsHeart.setImageResource(R.drawable.ic_heart_red);
                 mealDetailsPresenter.addMealToFav(singleMealItem);
+                Utils.showCustomSnackbar(requireView(),"Added to favorite");
             }else {
                 viewDataBinding.icMealDetailsHeart.setImageResource(R.drawable.ic_heart_gray);
                 mealDetailsPresenter.deleteMealFromFav(singleMealItem);
@@ -163,21 +156,20 @@ public class MealDetailsFragment extends Fragment implements IViewMealDetailsFra
 
         //add meal to calender
         viewDataBinding.icMealDetailsCalender.setOnClickListener(view -> {
-            showDatePicker();
-            clearCalenderTime();
-            mealDetailsPresenter.addMealToPlanned(new PlannedMeal(calendar.getTime(),singleMealItem));
+            showDatePicker(singleMealItem);
+
         });
 
     }
 
     private void clearCalenderTime() {
-        calendar.clear(Calendar.HOUR);
-        calendar.clear(Calendar.MINUTE);
-        calendar.clear(Calendar.SECOND);
-        calendar.clear(Calendar.MILLISECOND);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
     }
 
-    private void showDatePicker() {
+    private void showDatePicker(SingleMealItem singleMealItem) {
 
         calendar = Calendar.getInstance();
 
@@ -188,6 +180,9 @@ public class MealDetailsFragment extends Fragment implements IViewMealDetailsFra
                     calendar.set(Calendar.DAY_OF_MONTH,day);
                     calendar.set(Calendar.MONTH,month);
                     calendar.set(Calendar.YEAR,year);
+                    clearCalenderTime();
+                    Log.i(TAG, "showMealDetails: calender "+calendar.getTime());
+                    mealDetailsPresenter.addMealToPlanned(new PlannedMeal(calendar.getTime(),singleMealItem));
                     Utils.showCustomSnackbar(requireView(),"Added to calender");
                 }
             },

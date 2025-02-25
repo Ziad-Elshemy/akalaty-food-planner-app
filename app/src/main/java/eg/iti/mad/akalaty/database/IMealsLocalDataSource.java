@@ -7,17 +7,19 @@ import java.util.List;
 
 import eg.iti.mad.akalaty.model.PlannedMeal;
 import eg.iti.mad.akalaty.model.SingleMealItem;
+import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Flowable;
 
 public interface IMealsLocalDataSource {
 
     //favorite
-    public void insertMeal(SingleMealItem singleMealItem);
-    public void deleteMeal(SingleMealItem singleMealItem);
-    public LiveData<List<SingleMealItem>> getAllMeals();
+    public Completable insertMeal(SingleMealItem singleMealItem);
+    public Completable deleteMeal(SingleMealItem singleMealItem);
+    public Flowable<List<SingleMealItem>> getAllMeals();
 
     //planned
-    public void insertPlannedMeal(PlannedMeal plannedMeal);
-    public void deletePlannedMeal(PlannedMeal plannedMeal);
-    public LiveData<List<PlannedMeal>> getAllPlannedMeals();
-    public LiveData<List<PlannedMeal>> getMealByDate(Date date);
+    public Completable insertPlannedMeal(PlannedMeal plannedMeal);
+    public Completable deletePlannedMeal(PlannedMeal plannedMeal);
+    public Flowable<List<PlannedMeal>> getAllPlannedMeals();
+    public Flowable<List<PlannedMeal>> getMealByDate(Date date);
 }
