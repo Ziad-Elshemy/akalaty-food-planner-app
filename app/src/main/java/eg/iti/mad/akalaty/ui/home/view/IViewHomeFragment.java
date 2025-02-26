@@ -7,9 +7,11 @@ import eg.iti.mad.akalaty.model.CategoriesItem;
 import eg.iti.mad.akalaty.model.FilteredMealsItem;
 import eg.iti.mad.akalaty.model.IngredientsItem;
 import eg.iti.mad.akalaty.model.RandomMealsItem;
+import eg.iti.mad.akalaty.model.SingleMealItem;
 
 public interface IViewHomeFragment {
     void showRandomMeal(RandomMealsItem randomMealsItem);
+    void showMealById(SingleMealItem singleMealItem);
 
     void showAllCategories(List<CategoriesItem> categoriesItemList);
     void showMealsByCategory(List<FilteredMealsItem> filteredMealsItems);

@@ -25,7 +25,7 @@ public interface WebService {
     Single<SingleMealByIdResponse> getMealDetailsById(@Query("i") String mealId);
 
     @GET("search.php")
-    Single<MealDetailsResponse> searchMealsByName(@Query("s") String mealName);
+    Single<FilteredMealsResponse> searchMealsByName(@Query("s") String mealName);
 
     @GET("random.php")
     Single<RandomMealResponse> getRandomMealDetails();

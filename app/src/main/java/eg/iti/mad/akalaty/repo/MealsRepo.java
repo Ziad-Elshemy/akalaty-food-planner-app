@@ -11,6 +11,7 @@ import eg.iti.mad.akalaty.model.AreasResponse;
 import eg.iti.mad.akalaty.model.CategoriesResponse;
 import eg.iti.mad.akalaty.model.FilteredMealsResponse;
 import eg.iti.mad.akalaty.model.IngredientsResponse;
+import eg.iti.mad.akalaty.model.MealDetailsResponse;
 import eg.iti.mad.akalaty.model.PlannedMeal;
 import eg.iti.mad.akalaty.model.RandomMealResponse;
 import eg.iti.mad.akalaty.model.SingleMealByIdResponse;
@@ -83,8 +84,10 @@ public class MealsRepo implements IMealsRepo{
         return remoteDataSource.getMealById(mealId);
     }
 
-
-
+    @Override
+    public Single<FilteredMealsResponse> getMealsBySearch(String mealName) {
+        return remoteDataSource.searchMealsByName(mealName);
+    }
 
 
     // local

@@ -11,6 +11,6 @@ public interface IHomePresenter {
     void getAllIngredient();
     void getMealsByIngredient(String ingredientId);
 
-
+    void getMealById(String mealId);
 
 }

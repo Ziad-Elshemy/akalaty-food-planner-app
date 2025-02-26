@@ -7,6 +7,7 @@ import eg.iti.mad.akalaty.model.AreasResponse;
 import eg.iti.mad.akalaty.model.CategoriesResponse;
 import eg.iti.mad.akalaty.model.FilteredMealsResponse;
 import eg.iti.mad.akalaty.model.IngredientsResponse;
+import eg.iti.mad.akalaty.model.MealDetailsResponse;
 import eg.iti.mad.akalaty.model.PlannedMeal;
 import eg.iti.mad.akalaty.model.RandomMealResponse;
 import eg.iti.mad.akalaty.model.SingleMealByIdResponse;
@@ -29,6 +30,8 @@ public interface IMealsRepo {
     public Single<IngredientsResponse> getAllIngredients();
     public Single<FilteredMealsResponse> getMealsByIngredient(String ingredientId);
     public Single<SingleMealByIdResponse> getMealById(String mealId);
+    public Single<FilteredMealsResponse> getMealsBySearch(String mealName);
+
 
     //local fav
     public Flowable<List<SingleMealItem>> getAllStoredFavMeals();

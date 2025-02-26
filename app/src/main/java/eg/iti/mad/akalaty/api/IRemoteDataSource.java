@@ -17,6 +17,6 @@ public interface IRemoteDataSource {
     public Single<FilteredMealsResponse> getMealsByAreaId( String areaId);
     public Single<IngredientsResponse> getAllIngredients();
     public Single<FilteredMealsResponse> getMealsByIngredientId( String ingredientId);
-    public Single<MealDetailsResponse> searchMealsByName( String mealName);
+    public Single<FilteredMealsResponse> searchMealsByName( String mealName);
     public Single<SingleMealByIdResponse> getMealById( String mealId);
 }
