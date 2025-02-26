@@ -5,6 +5,7 @@ import eg.iti.mad.akalaty.model.CategoriesResponse;
 import eg.iti.mad.akalaty.model.FilteredMealsResponse;
 import eg.iti.mad.akalaty.model.IngredientsResponse;
 import eg.iti.mad.akalaty.model.RandomMealResponse;
+import eg.iti.mad.akalaty.model.SingleMealByIdResponse;
 import eg.iti.mad.akalaty.repo.MealsRepo;
 import eg.iti.mad.akalaty.ui.home.view.IViewHomeFragment;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -127,6 +128,22 @@ public class HomePresenter implements IHomePresenter{
                 .subscribe(
                         list -> {
                             _view.showMealsByIngredient(list);
+                        },
+                        error -> {
+                            _view.showErrorMsg(error.getLocalizedMessage());
+                        }
+                );
+    }
+
+    @Override
+    public void getMealById(String mealId) {
+        Single<SingleMealByIdResponse> call = _repo.getMealById(mealId);
+        call.subscribeOn(Schedulers.io())
+                .map(item -> item.getSingleMeal().get(0))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        list -> {
+                            _view.showMealById(list);
                         },
                         error -> {
                             _view.showErrorMsg(error.getLocalizedMessage());

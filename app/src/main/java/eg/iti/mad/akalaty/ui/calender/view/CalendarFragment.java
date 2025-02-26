@@ -1,5 +1,6 @@
 package eg.iti.mad.akalaty.ui.calender.view;
 
+import android.app.Dialog;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -11,7 +12,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -24,6 +27,7 @@ import eg.iti.mad.akalaty.databinding.FragmentCalendarBinding;
 import eg.iti.mad.akalaty.model.PlannedMeal;
 import eg.iti.mad.akalaty.repo.MealsRepo;
 import eg.iti.mad.akalaty.ui.calender.presenter.CalendarPresenter;
+import eg.iti.mad.akalaty.utils.Utils;
 
 
 public class CalendarFragment extends Fragment implements IViewCalendarFragment, OnRemovePlannedClickListener {
@@ -32,6 +36,7 @@ public class CalendarFragment extends Fragment implements IViewCalendarFragment,
     CalendarPresenter calendarPresenter;
     CalendarAdapter calendarAdapter;
     Calendar calendar;
+    Dialog dialog;
     private static final String TAG = "CalendarFragment";
 
     @Override
@@ -80,6 +85,44 @@ public class CalendarFragment extends Fragment implements IViewCalendarFragment,
 
     @Override
     public void onRemovePlannedClicked(PlannedMeal plannedMeal) {
-        calendarPresenter.deleteFromCal(plannedMeal);
+        showDeletePopup(plannedMeal);
     }
+
+
+    private void showDeletePopup(PlannedMeal plannedMeal) {
+    dialog = new Dialog(getContext());
+        dialog.setContentView(R.layout.dialog_delete_layout);
+        dialog.getWindow().setBackgroundDrawableResource(R.color.md_theme_light_primaryContainer);
+    TextView txt = dialog.findViewById(R.id.delete_txt);
+        txt.setText("Delete this item?");
+    Button delete = dialog.findViewById(R.id.btnAction);
+    Button cancel = dialog.findViewById(R.id.btnCancel);
+    ImageButton close = dialog.findViewById(R.id.btnClose);
+
+        delete.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            dialog.dismiss();
+            calendarPresenter.deleteFromCal(plannedMeal);
+            Utils.showCustomSnackbar(requireView(),"Deleted Successfully");
+        }
+    });
+        close.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            dialog.dismiss();
+            Utils.showCustomSnackbar(requireView(),"Canceled");
+        }
+    });
+        cancel.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            dialog.dismiss();
+            Utils.showCustomSnackbar(requireView(),"Canceled");
+        }
+    });
+
+        dialog.show();
+}
+
 }

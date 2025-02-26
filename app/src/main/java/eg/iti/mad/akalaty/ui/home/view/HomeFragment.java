@@ -11,6 +11,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,7 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -36,6 +38,7 @@ import eg.iti.mad.akalaty.model.CategoriesItem;
 import eg.iti.mad.akalaty.model.FilteredMealsItem;
 import eg.iti.mad.akalaty.model.IngredientsItem;
 import eg.iti.mad.akalaty.model.RandomMealsItem;
+import eg.iti.mad.akalaty.model.SingleMealItem;
 import eg.iti.mad.akalaty.repo.MealsRepo;
 import eg.iti.mad.akalaty.ui.home.presenter.HomePresenter;
 import eg.iti.mad.akalaty.ui.home.view.area.AllAreasAdapter;
@@ -48,6 +51,7 @@ import eg.iti.mad.akalaty.ui.home.view.ingredient.AllIngredientsAdapter;
 import eg.iti.mad.akalaty.ui.home.view.ingredient.MealsByIngredientAdapter;
 import eg.iti.mad.akalaty.ui.home.view.ingredient.OnIngredientClickListener;
 import eg.iti.mad.akalaty.utils.NetworkUtils;
+import eg.iti.mad.akalaty.utils.SharedPref;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
@@ -56,10 +60,10 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class HomeFragment extends Fragment implements IViewHomeFragment , OnCategoryClickListener, OnMealClickListener, OnAreaClickListener, OnIngredientClickListener {
 
-
+    private static final String TAG = "HomeFragment";
     FragmentHomeBinding viewDataBinding;
     HomePresenter homePresenter;
-
+    Calendar calendar;
     AllCategoriesAdapter allCategoriesAdapter;
     MealsByCategoryAdapter mealsByCategoryAdapter;
     AllAreasAdapter allAreasAdapter;
@@ -105,7 +109,11 @@ public class HomeFragment extends Fragment implements IViewHomeFragment , OnCate
 
         homePresenter = new HomePresenter(this, MealsRepo.getInstance(RemoteDataSource.getInstance(), MealsLocalDataSource.getInstance(requireContext())));
 
-        homePresenter.getRandomMeal();
+        setRandomMeal();
+
+
+
+
         homePresenter.getAllCategories();
         homePresenter.getMealsByCategory("Beef");
         homePresenter.getAllAreas();
@@ -147,6 +155,23 @@ public class HomeFragment extends Fragment implements IViewHomeFragment , OnCate
 
     }
 
+    private void setRandomMeal() {
+        calendar = Calendar.getInstance();
+        clearCalenderTime();
+        Log.i(TAG, "onViewCreated: calendar"+calendar.getTime().getTime());
+        Log.i(TAG, "onViewCreated: shared"+SharedPref.getInstance(requireActivity()).getMealDate());
+
+        if (calendar.getTime().getTime()==SharedPref.getInstance(requireActivity()).getMealDate()){
+            homePresenter.getMealById(SharedPref.getInstance(requireActivity()).getMealId());
+            Log.i(TAG, "onViewCreated: true");
+        }else {
+            homePresenter.getRandomMeal();
+            Log.i(TAG, "onViewCreated: false");
+        }
+        Log.i(TAG, "onViewCreated: calendar"+calendar.getTime().getTime());
+        Log.i(TAG, "onViewCreated: shared"+SharedPref.getInstance(requireActivity()).getMealDate());
+    }
+
     private void observeInternetStatus() {
         disposables.add(
                 Observable.interval(0, 1, TimeUnit.SECONDS)
@@ -161,7 +186,7 @@ public class HomeFragment extends Fragment implements IViewHomeFragment , OnCate
         if (isConnected) {
             viewDataBinding.imgNoInternet.setVisibility(View.GONE);
             viewDataBinding.homeScene.setVisibility(View.VISIBLE);
-            homePresenter.getRandomMeal();
+            setRandomMeal();
             homePresenter.getAllCategories();
             homePresenter.getMealsByCategory("Beef");
             homePresenter.getAllAreas();
@@ -184,6 +209,9 @@ public class HomeFragment extends Fragment implements IViewHomeFragment , OnCate
     @Override
     public void showRandomMeal(RandomMealsItem randomMealsItem) {
 
+        SharedPref.getInstance(requireActivity()).setMealId(randomMealsItem.getIdMeal());
+        SharedPref.getInstance(requireActivity()).setMealDate(calendar.getTime().getTime());
+
         viewDataBinding.imgRandomMeal.setOnClickListener(view -> {
             HomeFragmentDirections.ActionHomeFragmentToMealDetailsFragment action = HomeFragmentDirections.actionHomeFragmentToMealDetailsFragment(randomMealsItem.getIdMeal());
             Navigation.findNavController(viewDataBinding.getRoot()).navigate(action);
@@ -193,7 +221,7 @@ public class HomeFragment extends Fragment implements IViewHomeFragment , OnCate
             Navigation.findNavController(viewDataBinding.getRoot()).navigate(action);
         });
 
-        Toast.makeText(getContext(), "getRandomMealDetails onResponse", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getContext(), "getRandomMealDetails onResponse", Toast.LENGTH_SHORT).show();
         viewDataBinding.lottieAnimationView.setVisibility(View.VISIBLE);
         Glide.with(requireActivity()).load(randomMealsItem.getStrMealThumb())
                 .listener(new RequestListener<Drawable>() {
@@ -215,6 +243,41 @@ public class HomeFragment extends Fragment implements IViewHomeFragment , OnCate
         viewDataBinding.imgMealArea.setImageResource(AreasImages.getAreaByName(randomMealsItem.getStrArea()));
         viewDataBinding.txtMealName.setText(randomMealsItem.getStrMeal());
         viewDataBinding.txtMealCat.setText(randomMealsItem.getStrCategory());
+    }
+
+    @Override
+    public void showMealById(SingleMealItem singleMealItem) {
+        viewDataBinding.imgRandomMeal.setOnClickListener(view -> {
+            HomeFragmentDirections.ActionHomeFragmentToMealDetailsFragment action = HomeFragmentDirections.actionHomeFragmentToMealDetailsFragment(singleMealItem.getIdMeal());
+            Navigation.findNavController(viewDataBinding.getRoot()).navigate(action);
+        });
+        viewDataBinding.imgMealDetails.setOnClickListener(view -> {
+            HomeFragmentDirections.ActionHomeFragmentToMealDetailsFragment action = HomeFragmentDirections.actionHomeFragmentToMealDetailsFragment(singleMealItem.getIdMeal());
+            Navigation.findNavController(viewDataBinding.getRoot()).navigate(action);
+        });
+
+//        Toast.makeText(getContext(), "getRandomMealDetails onResponse", Toast.LENGTH_SHORT).show();
+        viewDataBinding.lottieAnimationView.setVisibility(View.VISIBLE);
+        Glide.with(requireActivity()).load(singleMealItem.getStrMealThumb())
+                .listener(new RequestListener<Drawable>() {
+                    @Override
+                    public boolean onLoadFailed(@Nullable GlideException e, @Nullable Object model, @NonNull Target<Drawable> target, boolean isFirstResource) {
+                        viewDataBinding.lottieAnimationView.setVisibility(View.GONE);
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(@NonNull Drawable resource, @NonNull Object model, Target<Drawable> target, @NonNull DataSource dataSource, boolean isFirstResource) {
+                        viewDataBinding.lottieAnimationView.setVisibility(View.GONE);
+                        return false;
+                    }
+                })
+//                .placeholder(R.drawable.ic_launcher_background)
+                .error(R.drawable.ic_launcher_foreground)
+                .into(viewDataBinding.imgRandomMeal);
+        viewDataBinding.imgMealArea.setImageResource(AreasImages.getAreaByName(singleMealItem.getStrArea()));
+        viewDataBinding.txtMealName.setText(singleMealItem.getStrMeal());
+        viewDataBinding.txtMealCat.setText(singleMealItem.getStrCategory());
     }
 
     @Override
@@ -275,4 +338,12 @@ public class HomeFragment extends Fragment implements IViewHomeFragment , OnCate
     public void onIngredientItemClicked(IngredientsItem ingredientsItem) {
         homePresenter.getMealsByIngredient(ingredientsItem.getStrIngredient());
     }
+
+    private void clearCalenderTime() {
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+    }
+
 }

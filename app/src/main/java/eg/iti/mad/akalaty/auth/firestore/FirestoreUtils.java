@@ -7,7 +7,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import eg.iti.mad.akalaty.Constants;
+import eg.iti.mad.akalaty.utils.Constants;
 import eg.iti.mad.akalaty.model.AppUser;
 
 public class FirestoreUtils {

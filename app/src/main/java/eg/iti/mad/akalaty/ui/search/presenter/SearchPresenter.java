@@ -1,9 +1,12 @@
 package eg.iti.mad.akalaty.ui.search.presenter;
 
+import android.util.Log;
+
 import eg.iti.mad.akalaty.model.AreasResponse;
 import eg.iti.mad.akalaty.model.CategoriesResponse;
 import eg.iti.mad.akalaty.model.FilteredMealsResponse;
 import eg.iti.mad.akalaty.model.IngredientsResponse;
+import eg.iti.mad.akalaty.model.MealDetailsResponse;
 import eg.iti.mad.akalaty.repo.MealsRepo;
 import eg.iti.mad.akalaty.ui.search.view.IViewSearchFragment;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -15,6 +18,7 @@ public class SearchPresenter implements ISearchPresenter {
     IViewSearchFragment _view;
     MealsRepo _repo;
 
+    private static final String TAG = "SearchPresenter";
     public SearchPresenter(IViewSearchFragment _view, MealsRepo _repo){
         this._view = _view;
         this._repo = _repo;
@@ -115,6 +119,23 @@ public class SearchPresenter implements ISearchPresenter {
                 .subscribe(
                         list -> {
                             _view.showMealsByIngredient(list);
+                        },
+                        error -> {
+                            _view.showErrorMsg(error.getLocalizedMessage());
+                        }
+                );
+    }
+
+    @Override
+    public void getMealsBySearch(String mealName) {
+        Single<FilteredMealsResponse> call = _repo.getMealsBySearch(mealName);
+        call.subscribeOn(Schedulers.io())
+                .map(item -> item.getFilteredMeals())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        list -> {
+                            _view.showMealsBySearch(list);
+                            Log.i(TAG, "getMealsBySearch: "+list);
                         },
                         error -> {
                             _view.showErrorMsg(error.getLocalizedMessage());

@@ -92,7 +92,7 @@ public class RemoteDataSource implements IRemoteDataSource{
     }
 
     @Override
-    public Single<MealDetailsResponse> searchMealsByName(String mealName) {
+    public Single<FilteredMealsResponse> searchMealsByName(String mealName) {
         return webService.searchMealsByName(mealName);
     }
 

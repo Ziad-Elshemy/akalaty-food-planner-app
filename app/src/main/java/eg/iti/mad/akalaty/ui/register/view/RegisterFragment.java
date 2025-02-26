@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
@@ -46,9 +47,18 @@ public class RegisterFragment extends Fragment implements OnRegisterResponse {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        viewDataBinding.txtToLogin.setOnClickListener(view1 -> {
+            Navigation.findNavController(view).navigate(R.id.action_registerFragment_to_loginFragment);
+        });
+
+        viewDataBinding.txtSkip.setOnClickListener(view1 -> {
+            Navigation.findNavController(view).navigate(R.id.action_registerFragment_to_homeFragment);
+        });
+
 
         viewDataBinding.btnSignUp.setOnClickListener(view1 -> {
             createAccount();
+            Log.i(TAG, "onViewCreated: ");
         });
 
     }
@@ -108,6 +118,10 @@ public class RegisterFragment extends Fragment implements OnRegisterResponse {
             Navigation.findNavController(requireView()).navigate(R.id.action_registerFragment_to_loginFragment);
         }else {
             Log.i(TAG, "setOnRegisterResponse: "+msg);
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setMessage(msg).setTitle("ERROR");
+            AlertDialog dialog = builder.create();
+            dialog.show();
         }
     }
 }

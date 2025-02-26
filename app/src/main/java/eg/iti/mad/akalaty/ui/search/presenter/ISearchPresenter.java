@@ -9,6 +9,8 @@ public interface ISearchPresenter {
     void getAllIngredient();
     void getMealsByIngredient(String ingredientId);
 
+    void getMealsBySearch(String mealName);
+
 
 
 }
