@@ -10,6 +10,8 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +19,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 import eg.iti.mad.akalaty.R;
 import eg.iti.mad.akalaty.api.RemoteDataSource;
@@ -31,6 +36,9 @@ import eg.iti.mad.akalaty.utils.SharedPref;
 import eg.iti.mad.akalaty.utils.Utils;
 
 
+import androidx.credentials.CredentialManager;
+
+
 public class LoginFragment extends Fragment implements OnLoginResponse, IViewLoginFragment {
 
 
@@ -39,9 +47,31 @@ public class LoginFragment extends Fragment implements OnLoginResponse, IViewLog
     Dialog dialog;
     LoginPresenter loginPresenter;
 
+    // [START declare_auth]
+    private FirebaseAuth mAuth;
+    // [END declare_auth]
+
+    // [START declare_credential_manager]
+    private CredentialManager credentialManager;
+    // [END declare_credential_manager]
+
+//    private static final int RC_SIGN_IN = 9001;
+//    private GoogleSignInClient googleSignInClient;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // [START initialize_auth]
+        // Initialize Firebase Auth
+        mAuth = FirebaseAuth.getInstance();
+        // [END initialize_auth]
+
+        // [START initialize_credential_manager]
+        // Initialize Credential Manager
+        credentialManager = CredentialManager.create(requireContext());
+        // [END initialize_credential_manager]
+
 
     }
 
@@ -49,7 +79,7 @@ public class LoginFragment extends Fragment implements OnLoginResponse, IViewLog
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        viewDataBinding = DataBindingUtil.inflate(inflater,R.layout.fragment_login,container,false);
+        viewDataBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_login, container, false);
         return viewDataBinding.getRoot();
     }
 
@@ -58,7 +88,7 @@ public class LoginFragment extends Fragment implements OnLoginResponse, IViewLog
         super.onViewCreated(view, savedInstanceState);
         boolean isLogged = SharedPref.getInstance(requireActivity()).getIsLogged();
 
-        if(isLogged){
+        if (isLogged) {
             Navigation.findNavController(requireView()).navigate(R.id.action_loginFragment_to_homeFragment);
         }
 
@@ -76,22 +106,31 @@ public class LoginFragment extends Fragment implements OnLoginResponse, IViewLog
             signInAccount();
         });
 
+        viewDataBinding.cardGoogleLogin.setOnClickListener(view1 -> {
+//            launchCredentialManager();
+            viewDataBinding.btnLogin.setVisibility(View.INVISIBLE);
+            viewDataBinding.cardGoogleLogin.setVisibility(View.INVISIBLE);
+            viewDataBinding.progressBarLogin.setVisibility(View.VISIBLE);
+            loginPresenter.signInWithGoogle(requireContext(), credentialManager);
+        });
+
     }
 
+
     private void signInAccount() {
-        if (validate()){
+        if (validate()) {
             //create an account to firebase here
             addAccountToFirebase();
 
             viewDataBinding.btnLogin.setVisibility(View.INVISIBLE);
             viewDataBinding.progressBarLogin.setVisibility(View.VISIBLE);
-        }
-        else {
+        } else {
         }
     }
+
     private void addAccountToFirebase() {
 
-        loginPresenter.addAccountToFirebase(viewDataBinding.edtEmail.getEditText().getText().toString(),viewDataBinding.edtPassword.getEditText().getText().toString(),this);
+        loginPresenter.addAccountToFirebase(viewDataBinding.edtEmail.getEditText().getText().toString(), viewDataBinding.edtPassword.getEditText().getText().toString(), this);
 
     }
 
@@ -99,19 +138,19 @@ public class LoginFragment extends Fragment implements OnLoginResponse, IViewLog
         boolean isValid = true;
 
 
-        if (viewDataBinding.edtEmail.getEditText().getText().toString().isEmpty()){
+        if (viewDataBinding.edtEmail.getEditText().getText().toString().isEmpty()) {
             //set error in email;
             viewDataBinding.edtEmail.setError("Please Enter Your Email");
             isValid = false;
-        }else {
+        } else {
             viewDataBinding.edtEmail.setError(null);
         }
 
-        if (viewDataBinding.edtPassword.getEditText().getText().toString().isEmpty()){
+        if (viewDataBinding.edtPassword.getEditText().getText().toString().isEmpty()) {
             //set error in password;
             viewDataBinding.edtPassword.setError("Please Enter Your Password");
             isValid = false;
-        }else {
+        } else {
             viewDataBinding.edtPassword.setError(null);
         }
 
@@ -131,7 +170,7 @@ public class LoginFragment extends Fragment implements OnLoginResponse, IViewLog
     @Override
     public void setOnLoginSuccess(String userId) {
 
-        Log.i(TAG, "setOnLoginResponse: "+userId);
+        Log.i(TAG, "setOnLoginResponse: " + userId);
 //            Navigation.findNavController(requireView()).navigate(R.id.action_loginFragment_to_homeFragment);
         loginPresenter.checkUserFromFirestore(userId);
 
@@ -139,7 +178,7 @@ public class LoginFragment extends Fragment implements OnLoginResponse, IViewLog
 
     @Override
     public void setOnLoginFailure(String msg) {
-        Log.i(TAG, "setOnLoginFailure: "+msg);
+        Log.i(TAG, "setOnLoginFailure: " + msg);
         viewDataBinding.btnLogin.setVisibility(View.VISIBLE);
         viewDataBinding.progressBarLogin.setVisibility(View.INVISIBLE);
         showLoginFailedPopup(msg);
@@ -197,6 +236,28 @@ public class LoginFragment extends Fragment implements OnLoginResponse, IViewLog
 
     @Override
     public void showOnUserLoginFailure(String errMsg) {
-        Utils.showCustomSnackbar(requireView(),errMsg);
+        Utils.showCustomSnackbar(requireView(), errMsg);
+    }
+
+    @Override
+    public void showOnUserLoginSuccessWithGoogle(AppUser appUser) {
+        Log.i(TAG, "showOnUserLoginSuccessWithGoogle: " + appUser.getEmail());
+        // now you can save your user and auto login
+        saveUserToSharedPref(appUser);
+        viewDataBinding.progressBarLogin.setVisibility(View.GONE);
+        Intent intent = new Intent(getActivity(), MainActivity.class);
+        startActivity(intent);
+        getActivity().finish();
+    }
+
+    @Override
+    public void showOnUserLoginFailureWithGoogle(String errMsg) {
+        Log.i(TAG, "showOnUserLoginFailureWithGoogle: " + errMsg);
+        new Handler(Looper.getMainLooper()).post(() -> {
+            showLoginFailedPopup(errMsg);
+            viewDataBinding.btnLogin.setVisibility(View.VISIBLE);
+            viewDataBinding.cardGoogleLogin.setVisibility(View.VISIBLE);
+            viewDataBinding.progressBarLogin.setVisibility(View.INVISIBLE);
+        });
     }
 }

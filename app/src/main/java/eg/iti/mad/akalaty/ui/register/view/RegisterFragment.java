@@ -1,15 +1,28 @@
 package eg.iti.mad.akalaty.ui.register.view;
 
+import static com.google.android.libraries.identity.googleid.GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL;
+
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.credentials.Credential;
+import androidx.credentials.CredentialManager;
+import androidx.credentials.CredentialManagerCallback;
+import androidx.credentials.CustomCredential;
+import androidx.credentials.GetCredentialRequest;
+import androidx.credentials.GetCredentialResponse;
+import androidx.credentials.exceptions.GetCredentialException;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
+import android.os.CancellationSignal;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,25 +31,61 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption;
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
+
+import java.util.concurrent.Executors;
+
 import eg.iti.mad.akalaty.R;
+import eg.iti.mad.akalaty.api.RemoteDataSource;
 import eg.iti.mad.akalaty.auth.MyFirebaseAuth;
+import eg.iti.mad.akalaty.database.MealsLocalDataSource;
 import eg.iti.mad.akalaty.databinding.FragmentRegisterBinding;
 import eg.iti.mad.akalaty.auth.OnRegisterResponse;
+import eg.iti.mad.akalaty.model.AppUser;
+import eg.iti.mad.akalaty.repo.MealsRepo;
+import eg.iti.mad.akalaty.ui.MainActivity;
+import eg.iti.mad.akalaty.ui.register.presenter.RegisterPresenter;
+import eg.iti.mad.akalaty.utils.SharedPref;
 
 
-public class RegisterFragment extends Fragment implements OnRegisterResponse {
+public class RegisterFragment extends Fragment implements IViewRegisterFragment, OnRegisterResponse {
 
     private static final String TAG = "Firebase";
     FragmentRegisterBinding viewDataBinding;
+    RegisterPresenter registerPresenter;
 
     Dialog dialog;
     MyFirebaseAuth myFirebaseAuth;
+
+    // [START declare_auth]
+    private FirebaseAuth mAuth;
+    // [END declare_auth]
+
+    // [START declare_credential_manager]
+    private CredentialManager credentialManager;
+    // [END declare_credential_manager]
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         myFirebaseAuth = new MyFirebaseAuth();
+
+        // [START initialize_auth]
+        // Initialize Firebase Auth
+        mAuth = FirebaseAuth.getInstance();
+        // [END initialize_auth]
+
+        // [START initialize_credential_manager]
+        // Initialize Credential Manager
+        credentialManager = CredentialManager.create(requireContext());
+        // [END initialize_credential_manager]
+
 
     }
 
@@ -51,6 +100,7 @@ public class RegisterFragment extends Fragment implements OnRegisterResponse {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        registerPresenter = new RegisterPresenter(this, MealsRepo.getInstance(RemoteDataSource.getInstance(), MealsLocalDataSource.getInstance(requireContext())));
 
         viewDataBinding.txtToLogin.setOnClickListener(view1 -> {
             Navigation.findNavController(view).navigate(R.id.action_registerFragment_to_loginFragment);
@@ -66,7 +116,15 @@ public class RegisterFragment extends Fragment implements OnRegisterResponse {
             Log.i(TAG, "onViewCreated: ");
         });
 
+        viewDataBinding.cardGoogle.setOnClickListener(view1 -> {
+            viewDataBinding.btnSignUp.setVisibility(View.INVISIBLE);
+            viewDataBinding.cardGoogle.setVisibility(View.INVISIBLE);
+            viewDataBinding.progressBarSignup.setVisibility(View.VISIBLE);
+            registerPresenter.signUpWithGoogle(requireContext(), credentialManager);
+        });
+
     }
+
 
     void createAccount(){
         if (validate()){
@@ -127,10 +185,7 @@ public class RegisterFragment extends Fragment implements OnRegisterResponse {
 //            Navigation.findNavController(requireView()).navigate(R.id.action_registerFragment_to_loginFragment);
         }else {
             Log.i(TAG, "setOnRegisterResponse: "+msg);
-//            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-//            builder.setMessage(msg).setTitle("ERROR");
-//            AlertDialog dialog = builder.create();
-//            dialog.show();
+
             viewDataBinding.progressBarSignup.setVisibility(View.INVISIBLE);
             showRegisterFailedDialog(msg);
         }
@@ -195,4 +250,33 @@ public class RegisterFragment extends Fragment implements OnRegisterResponse {
         dialog.show();
     }
 
+    private void saveUserToSharedPref(AppUser user) {
+
+        SharedPref.getInstance(requireActivity()).setIsLogged(true);
+        SharedPref.getInstance(requireActivity()).setUserId(user.getId());
+        SharedPref.getInstance(requireActivity()).setUserName(user.getUsername());
+        SharedPref.getInstance(requireActivity()).setUserEmail(user.getEmail());
+    }
+
+    @Override
+    public void showOnUserRegisterSuccessWithGoogle(AppUser appUser) {
+        Log.i(TAG, "showOnUserLoginSuccessWithGoogle: " + appUser.getEmail());
+        // now you can save your user and auto login
+        saveUserToSharedPref(appUser);
+        viewDataBinding.progressBarSignup.setVisibility(View.GONE);
+        Intent intent = new Intent(getActivity(), MainActivity.class);
+        startActivity(intent);
+        getActivity().finish();
+    }
+
+    @Override
+    public void showOnUserRegisterFailureWithGoogle(String errMsg) {
+        Log.i(TAG, "showOnUserLoginFailureWithGoogle: " + errMsg);
+        new Handler(Looper.getMainLooper()).post(() -> {
+            viewDataBinding.btnSignUp.setVisibility(View.VISIBLE);
+            viewDataBinding.cardGoogle.setVisibility(View.VISIBLE);
+            viewDataBinding.progressBarSignup.setVisibility(View.INVISIBLE);
+            showRegisterFailedDialog(errMsg);
+        });
+    }
 }

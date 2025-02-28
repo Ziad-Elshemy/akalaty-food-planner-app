@@ -49,6 +49,9 @@ dependencies {
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)
     implementation(libs.legacy.support.v4)
+    implementation(libs.credentials)
+    implementation(libs.credentials.play.services.auth)
+    implementation(libs.googleid)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
@@ -93,6 +96,9 @@ dependencies {
 
     //room with RXJava
     implementation("androidx.room:room-rxjava3:2.6.1")
+
+    //google auth
+    implementation("com.google.android.gms:play-services-auth:21.3.0")
 
 
 

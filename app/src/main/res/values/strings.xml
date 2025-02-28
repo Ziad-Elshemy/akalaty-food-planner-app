@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Akalaty</string>
+    <string name="client_id">359306218945-g281uk7nfkkjt2c29kqgn9ofan73u4cd.apps.googleusercontent.com</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="lorem">Discover new recipes and organize your weekly meals with ease</string>

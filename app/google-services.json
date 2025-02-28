@@ -12,7 +12,20 @@
           "package_name": "eg.iti.mad.akalaty"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "359306218945-sgpr279vtamkgg0dp3fsjot8bs4vho4l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "eg.iti.mad.akalaty",
+            "certificate_hash": "34ceff0976725e97e4697f4d66193c6f60539de8"
+          }
+        },
+        {
+          "client_id": "359306218945-g281uk7nfkkjt2c29kqgn9ofan73u4cd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCXfPTvHcAViLEacLrE1GtgNiUqmIzylRw"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "359306218945-g281uk7nfkkjt2c29kqgn9ofan73u4cd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
