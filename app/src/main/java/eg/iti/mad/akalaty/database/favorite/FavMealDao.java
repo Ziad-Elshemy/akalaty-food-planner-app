@@ -26,4 +26,10 @@ public interface FavMealDao {
     @Delete
     Completable deleteMeal(SingleMealItem singleMealItem);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    Completable insertAll(List<SingleMealItem> meals);
+
+    @Query("DELETE FROM meals_table")
+    Completable deleteAll();
+
 }

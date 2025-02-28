@@ -8,4 +8,7 @@ import eg.iti.mad.akalaty.model.SingleMealItem;
 
 public interface IViewMyFavFragment {
     public void showFavMeals(List<SingleMealItem> mealsList);
+    public void showOnDeleteSuccess(String successMsg);
+    public void showOnDeleteFailure(String failureMsg);
+
 }

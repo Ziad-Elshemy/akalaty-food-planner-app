@@ -204,6 +204,17 @@
                         android:hint="@string/type_your_password" />
                 </com.google.android.material.textfield.TextInputLayout>
 
+                <ProgressBar
+                    android:id="@+id/progress_bar_signup"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:visibility="invisible"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/btnSignUp"
+                    app:layout_constraintBottom_toBottomOf="@id/btnSignUp"
+                    />
+
                 <Button
                     android:id="@+id/btnSignUp"
                     android:layout_width="match_parent"

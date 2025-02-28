@@ -17,29 +17,27 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.DocumentSnapshot;
 
 import eg.iti.mad.akalaty.R;
-import eg.iti.mad.akalaty.auth.MyFirebaseAuth;
+import eg.iti.mad.akalaty.api.RemoteDataSource;
 import eg.iti.mad.akalaty.auth.OnLoginResponse;
-import eg.iti.mad.akalaty.auth.firestore.FirestoreUtils;
+import eg.iti.mad.akalaty.database.MealsLocalDataSource;
 import eg.iti.mad.akalaty.databinding.FragmentLoginBinding;
 import eg.iti.mad.akalaty.model.AppUser;
+import eg.iti.mad.akalaty.repo.MealsRepo;
 import eg.iti.mad.akalaty.ui.MainActivity;
+import eg.iti.mad.akalaty.ui.login.presenter.LoginPresenter;
 import eg.iti.mad.akalaty.utils.SharedPref;
+import eg.iti.mad.akalaty.utils.Utils;
 
 
-public class LoginFragment extends Fragment implements OnLoginResponse {
+public class LoginFragment extends Fragment implements OnLoginResponse, IViewLoginFragment {
 
 
     private static final String TAG = "LoginFragment";
     FragmentLoginBinding viewDataBinding;
-    private MyFirebaseAuth mAuth;
     Dialog dialog;
+    LoginPresenter loginPresenter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -58,22 +56,14 @@ public class LoginFragment extends Fragment implements OnLoginResponse {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-//        SharedPreferences preferences = requireActivity().getSharedPreferences("user_pref", Context.MODE_PRIVATE);
-//        boolean isLogged = (preferences.getBoolean("isLogged",false));
         boolean isLogged = SharedPref.getInstance(requireActivity()).getIsLogged();
 
         if(isLogged){
             Navigation.findNavController(requireView()).navigate(R.id.action_loginFragment_to_homeFragment);
         }
 
+        loginPresenter = new LoginPresenter(this, MealsRepo.getInstance(RemoteDataSource.getInstance(), MealsLocalDataSource.getInstance(requireContext())));
 
-        mAuth = new MyFirebaseAuth();
-
-//        // Check if user is signed in (non-null) and update UI accordingly.
-//        FirebaseUser currentUser = mAuth.getCurrentUser();
-//        if(currentUser != null){
-//            Navigation.findNavController(view).navigate(R.id.action_loginFragment_to_homeFragment);
-//        }
 
         viewDataBinding.txtToRegister.setOnClickListener(view1 -> {
             Navigation.findNavController(view).navigate(R.id.action_loginFragment_to_registerFragment);
@@ -83,7 +73,6 @@ public class LoginFragment extends Fragment implements OnLoginResponse {
         });
 
         viewDataBinding.btnLogin.setOnClickListener(view1 -> {
-
             signInAccount();
         });
 
@@ -96,15 +85,13 @@ public class LoginFragment extends Fragment implements OnLoginResponse {
 
             viewDataBinding.btnLogin.setVisibility(View.INVISIBLE);
             viewDataBinding.progressBarLogin.setVisibility(View.VISIBLE);
-
-            //Snackbar.make(requireContext(),requireView(),"created",Snackbar.LENGTH_SHORT).show();
-        }else {
-            //Snackbar.make(requireContext(),requireView(),"not created",Snackbar.LENGTH_SHORT).show();
+        }
+        else {
         }
     }
     private void addAccountToFirebase() {
 
-        mAuth.signInToFirebase(viewDataBinding.edtEmail.getEditText().getText().toString(),viewDataBinding.edtPassword.getEditText().getText().toString(),this);
+        loginPresenter.addAccountToFirebase(viewDataBinding.edtEmail.getEditText().getText().toString(),viewDataBinding.edtPassword.getEditText().getText().toString(),this);
 
     }
 
@@ -132,33 +119,6 @@ public class LoginFragment extends Fragment implements OnLoginResponse {
     }
 
 
-    private void checkUserFromFirestore(String userId) {
-        FirestoreUtils.signInWithFirestore(userId,
-                new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        AppUser user = documentSnapshot.toObject(AppUser.class);
-                        if (user == null){
-                            Toast.makeText(requireContext(), "User not in Firestore", Toast.LENGTH_SHORT).show();
-                        }else {
-                            // now you can save your user and auto login
-                            saveUserToSharedPref(user);
-                            viewDataBinding.progressBarLogin.setVisibility(View.GONE);
-                            Intent intent = new Intent(getActivity(), MainActivity.class);
-                            startActivity(intent);
-                            getActivity().finish();
-                        }
-                    }
-                },
-                new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.i(TAG, "onFailure: "+e.getLocalizedMessage());
-                        Toast.makeText(requireContext(), "Firestore Failed", Toast.LENGTH_SHORT).show();
-                    }
-                });
-    }
-
     private void saveUserToSharedPref(AppUser user) {
 
         SharedPref.getInstance(requireActivity()).setIsLogged(true);
@@ -173,7 +133,7 @@ public class LoginFragment extends Fragment implements OnLoginResponse {
 
         Log.i(TAG, "setOnLoginResponse: "+userId);
 //            Navigation.findNavController(requireView()).navigate(R.id.action_loginFragment_to_homeFragment);
-        checkUserFromFirestore(userId);
+        loginPresenter.checkUserFromFirestore(userId);
 
     }
 
@@ -188,7 +148,7 @@ public class LoginFragment extends Fragment implements OnLoginResponse {
     private void showLoginFailedPopup(String msg) {
 
         dialog = new Dialog(getContext());
-        dialog.setContentView(R.layout.dialog_delete_layout);
+        dialog.setContentView(R.layout.dialog_action_layout);
         dialog.getWindow().setBackgroundDrawableResource(R.color.md_theme_light_primaryContainer);
         TextView txt = dialog.findViewById(R.id.delete_txt);
         txt.setText(msg);
@@ -220,4 +180,23 @@ public class LoginFragment extends Fragment implements OnLoginResponse {
         dialog.show();
     }
 
+    @Override
+    public void showOnDataFetchedFromFirestore() {
+//        Toast.makeText(requireContext(), "Data Fetched From Firestore", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showOnUserLoginSuccess(AppUser appUser) {
+        // now you can save your user and auto login
+        saveUserToSharedPref(appUser);
+        viewDataBinding.progressBarLogin.setVisibility(View.GONE);
+        Intent intent = new Intent(getActivity(), MainActivity.class);
+        startActivity(intent);
+        getActivity().finish();
+    }
+
+    @Override
+    public void showOnUserLoginFailure(String errMsg) {
+        Utils.showCustomSnackbar(requireView(),errMsg);
+    }
 }

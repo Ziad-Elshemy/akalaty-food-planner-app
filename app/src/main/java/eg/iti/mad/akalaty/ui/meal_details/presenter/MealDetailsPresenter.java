@@ -7,12 +7,15 @@ import eg.iti.mad.akalaty.repo.MealsRepo;
 import eg.iti.mad.akalaty.ui.meal_details.view.IViewMealDetailsFragment;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class MealDetailsPresenter implements IMealDetailsPresenter{
 
     IViewMealDetailsFragment _view;
     MealsRepo _repo;
+
+    private final CompositeDisposable disposables = new CompositeDisposable();
 
     public MealDetailsPresenter(IViewMealDetailsFragment _view, MealsRepo _repo){
         this._view = _view;
@@ -66,6 +69,10 @@ public class MealDetailsPresenter implements IMealDetailsPresenter{
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe();
+    }
+
+    public void clearDisposables() {
+        disposables.clear();
     }
 
 }

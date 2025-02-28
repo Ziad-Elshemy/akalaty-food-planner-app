@@ -16,6 +16,9 @@ public interface IMealsLocalDataSource {
     public Completable insertMeal(SingleMealItem singleMealItem);
     public Completable deleteMeal(SingleMealItem singleMealItem);
     public Flowable<List<SingleMealItem>> getAllMeals();
+    public Completable insertAll(List<SingleMealItem> singleMealItem);
+
+    public  Completable deleteAll();
 
     //planned
     public Completable insertPlannedMeal(PlannedMeal plannedMeal);
