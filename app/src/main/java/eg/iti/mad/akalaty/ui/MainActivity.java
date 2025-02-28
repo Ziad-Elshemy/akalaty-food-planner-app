@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
         if (!NetworkUtils.isInternetAvailable(this)) {
             Toast.makeText(this, "No Internet", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(this, "internet back", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "internet back", Toast.LENGTH_SHORT).show();
         }
     }
 }

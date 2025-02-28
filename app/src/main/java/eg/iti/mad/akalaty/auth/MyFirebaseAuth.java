@@ -6,10 +6,15 @@ import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 
 import eg.iti.mad.akalaty.auth.firestore.FirestoreUtils;
 import eg.iti.mad.akalaty.model.AppUser;
+import eg.iti.mad.akalaty.ui.login.view.IViewLoginFragment;
+import eg.iti.mad.akalaty.ui.register.view.IViewRegisterFragment;
 
 public class MyFirebaseAuth {
     private static final String TAG = "MyFirebaseAuth";
@@ -80,5 +85,35 @@ public class MyFirebaseAuth {
                 });
 
     }
+
+    public void firebaseAuthWithGoogle(String idToken, IViewLoginFragment iViewLoginFragment) {
+        mAuth = FirebaseAuth.getInstance();
+        AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        AppUser appUser = new AppUser(user.getUid(),user.getDisplayName(),user.getEmail());
+                        iViewLoginFragment.showOnUserLoginSuccessWithGoogle(appUser);
+                    } else {
+                        iViewLoginFragment.showOnUserLoginFailure("Authentication failed: " + task.getException().getMessage());
+                    }
+                });
+    }
+    public void firebaseAuthWithGoogle(String idToken, IViewRegisterFragment iViewRegisterFragment) {
+        mAuth = FirebaseAuth.getInstance();
+        AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        AppUser appUser = new AppUser(user.getUid(),user.getDisplayName(),user.getEmail());
+                        iViewRegisterFragment.showOnUserRegisterSuccessWithGoogle(appUser);
+                    } else {
+                        iViewRegisterFragment.showOnUserRegisterFailureWithGoogle("Authentication failed: " + task.getException().getMessage());
+                    }
+                });
+    }
+
 
 }
