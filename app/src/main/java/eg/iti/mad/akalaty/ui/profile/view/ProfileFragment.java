@@ -1,4 +1,4 @@
-package eg.iti.mad.akalaty.ui.profile;
+package eg.iti.mad.akalaty.ui.profile.view;
 
 import android.app.Dialog;
 import android.os.Bundle;
@@ -16,17 +16,26 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import eg.iti.mad.akalaty.R;
+import eg.iti.mad.akalaty.api.RemoteDataSource;
+import eg.iti.mad.akalaty.database.MealsLocalDataSource;
 import eg.iti.mad.akalaty.databinding.FragmentProfileBinding;
+import eg.iti.mad.akalaty.repo.MealsRepo;
+import eg.iti.mad.akalaty.ui.profile.presenter.ProfilePresenter;
 import eg.iti.mad.akalaty.utils.SharedPref;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
 
-public class ProfileFragment extends Fragment {
+public class ProfileFragment extends Fragment  implements IViewProfileFragment{
 
     FragmentProfileBinding viewDataBinding;
     Dialog dialog;
+    private final CompositeDisposable disposables = new CompositeDisposable();
+
+    ProfilePresenter profilePresenter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,6 +53,7 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        profilePresenter = new ProfilePresenter(this, MealsRepo.getInstance(RemoteDataSource.getInstance(), MealsLocalDataSource.getInstance(requireActivity())),requireContext());
 
         viewDataBinding.txtUsername.setText(SharedPref.getInstance(requireActivity()).getUserName());
         viewDataBinding.txtEmail.setText(SharedPref.getInstance(requireActivity()).getUserEmail());
@@ -72,18 +82,25 @@ public class ProfileFragment extends Fragment {
 
         viewDataBinding.btnBackup.setOnClickListener(view1 -> {
 
+            profilePresenter.uploadDataToFirestore(SharedPref.getInstance(requireActivity()).getUserId());
         });
 
-        viewDataBinding.btnBackup.setOnClickListener(view1 -> {
-
+        viewDataBinding.btnDownload.setOnClickListener(view1 -> {
+            profilePresenter.downloadDataFromFirestore(SharedPref.getInstance(requireActivity()).getUserId());
         });
 
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        profilePresenter.clearDisposables();
     }
 
     private void showLogoutDialog() {
 
         dialog = new Dialog(getContext());
-        dialog.setContentView(R.layout.dialog_delete_layout);
+        dialog.setContentView(R.layout.dialog_action_layout);
         dialog.getWindow().setBackgroundDrawableResource(R.color.md_theme_light_primaryContainer);
         TextView txt = dialog.findViewById(R.id.delete_txt);
         txt.setText("Are you sure you \nwant to logout?");
@@ -96,12 +113,9 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
-                SharedPref.getInstance(requireActivity()).setIsLogged(false);
-                SharedPref.getInstance(requireActivity()).setUserId("");
-                SharedPref.getInstance(requireActivity()).setUserName("");
-                SharedPref.getInstance(requireActivity()).setUserEmail("");
 
-                Navigation.findNavController(requireView()).navigate(R.id.action_profileFragment_to_loginFragment);
+                profilePresenter.logout();
+
             }
         });
         close.setOnClickListener(new View.OnClickListener() {
@@ -120,4 +134,38 @@ public class ProfileFragment extends Fragment {
         dialog.show();
     }
 
+
+    @Override
+    public void showOnUploadSuccess(String msg) {
+        Toast.makeText(requireActivity(), msg, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showOnUploadFailure(String msg) {
+        Toast.makeText(requireActivity(), msg, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showOnDownloadSuccess(String msg) {
+
+    }
+
+    @Override
+    public void showOnDownloadFailure(String msg) {
+
+    }
+
+    @Override
+    public void showOnLogoutSuccess(String msg) {
+        SharedPref.getInstance(requireActivity()).setIsLogged(false);
+        SharedPref.getInstance(requireActivity()).setUserId("");
+        SharedPref.getInstance(requireActivity()).setUserName("");
+        SharedPref.getInstance(requireActivity()).setUserEmail("");
+        Navigation.findNavController(requireView()).navigate(R.id.action_profileFragment_to_loginFragment);
+    }
+
+    @Override
+    public void showOnLogoutFailure(String msg) {
+
+    }
 }

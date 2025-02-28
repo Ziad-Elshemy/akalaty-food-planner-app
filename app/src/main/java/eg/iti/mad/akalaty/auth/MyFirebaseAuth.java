@@ -34,7 +34,7 @@ public class MyFirebaseAuth {
                     }else {
 //                        onRegisterListener.setOnRegisterResponse(false,task.getException().getLocalizedMessage());
                         Log.e(TAG, "addAccountToFirebase: failed"+task.getException().getLocalizedMessage());
-
+                        onRegisterListener.setOnRegisterResponse(false,task.getException().getLocalizedMessage());
                     }
                 });
 

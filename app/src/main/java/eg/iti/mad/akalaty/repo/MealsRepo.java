@@ -107,6 +107,16 @@ public class MealsRepo implements IMealsRepo{
     }
 
     @Override
+    public Completable insertAllFav(List<SingleMealItem> singleMealItemList) {
+        return mealsLocalDataSource.insertAll(singleMealItemList);
+    }
+
+    @Override
+    public Completable deleteAll() {
+        return mealsLocalDataSource.deleteAll();
+    }
+
+    @Override
     public Flowable<List<PlannedMeal>> getPlannedMealsByDate(Date date) {
         return mealsLocalDataSource.getMealByDate(date);
     }

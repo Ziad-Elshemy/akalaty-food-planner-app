@@ -168,12 +168,11 @@
                     android:id="@+id/progress_bar_login"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:layout_marginTop="20dp"
                     android:visibility="invisible"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/btnLogin"
+                    app:layout_constraintBottom_toBottomOf="@id/btnLogin"
                     />
 
                 <androidx.cardview.widget.CardView

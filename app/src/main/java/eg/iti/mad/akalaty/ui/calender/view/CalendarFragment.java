@@ -91,7 +91,7 @@ public class CalendarFragment extends Fragment implements IViewCalendarFragment,
 
     private void showDeletePopup(PlannedMeal plannedMeal) {
     dialog = new Dialog(getContext());
-        dialog.setContentView(R.layout.dialog_delete_layout);
+        dialog.setContentView(R.layout.dialog_action_layout);
         dialog.getWindow().setBackgroundDrawableResource(R.color.md_theme_light_primaryContainer);
     TextView txt = dialog.findViewById(R.id.delete_txt);
         txt.setText("Delete this item?");

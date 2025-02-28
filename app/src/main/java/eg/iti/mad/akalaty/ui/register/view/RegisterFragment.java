@@ -1,5 +1,6 @@
 package eg.iti.mad.akalaty.ui.register.view;
 
+import android.app.Dialog;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -13,6 +14,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 import eg.iti.mad.akalaty.R;
 import eg.iti.mad.akalaty.auth.MyFirebaseAuth;
@@ -25,6 +29,7 @@ public class RegisterFragment extends Fragment implements OnRegisterResponse {
     private static final String TAG = "Firebase";
     FragmentRegisterBinding viewDataBinding;
 
+    Dialog dialog;
     MyFirebaseAuth myFirebaseAuth;
 
 
@@ -66,7 +71,8 @@ public class RegisterFragment extends Fragment implements OnRegisterResponse {
     void createAccount(){
         if (validate()){
             //create an account to firebase here
-            
+            viewDataBinding.btnSignUp.setVisibility(View.INVISIBLE);
+            viewDataBinding.progressBarSignup.setVisibility(View.VISIBLE);
             addAccountToFirebase();
             
             //Snackbar.make(requireContext(),requireView(),"created",Snackbar.LENGTH_SHORT).show();
@@ -115,13 +121,78 @@ public class RegisterFragment extends Fragment implements OnRegisterResponse {
     public void setOnRegisterResponse(boolean isSuccess, String msg) {
         if (isSuccess){
             Log.i(TAG, "setOnRegisterResponse: "+msg);
-            Navigation.findNavController(requireView()).navigate(R.id.action_registerFragment_to_loginFragment);
+            viewDataBinding.btnSignUp.setVisibility(View.VISIBLE);
+            viewDataBinding.progressBarSignup.setVisibility(View.INVISIBLE);
+            showRegisterSuccessPopup("Registered Successfully!");
+//            Navigation.findNavController(requireView()).navigate(R.id.action_registerFragment_to_loginFragment);
         }else {
             Log.i(TAG, "setOnRegisterResponse: "+msg);
-            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-            builder.setMessage(msg).setTitle("ERROR");
-            AlertDialog dialog = builder.create();
-            dialog.show();
+//            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+//            builder.setMessage(msg).setTitle("ERROR");
+//            AlertDialog dialog = builder.create();
+//            dialog.show();
+            viewDataBinding.progressBarSignup.setVisibility(View.INVISIBLE);
+            showRegisterFailedDialog(msg);
         }
     }
+
+    private void showRegisterSuccessPopup(String msg) {
+
+        dialog = new Dialog(getContext());
+        dialog.setContentView(R.layout.dialog_good_info_layout);
+        dialog.getWindow().setBackgroundDrawableResource(R.color.md_theme_light_primaryContainer);
+        TextView txt = dialog.findViewById(R.id.txtGoodInfo);
+        txt.setText(msg);
+        Button ok = dialog.findViewById(R.id.btnGoodInfoOk);
+        ok.setText("Ok");
+        ImageButton close = dialog.findViewById(R.id.btnGoodInfoClose);
+
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                Navigation.findNavController(requireView()).navigate(R.id.action_registerFragment_to_loginFragment);
+            }
+        });
+        close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                Navigation.findNavController(requireView()).navigate(R.id.action_registerFragment_to_loginFragment);
+            }
+        });
+
+        dialog.show();
+    }
+
+    private void showRegisterFailedDialog(String msg) {
+
+        dialog = new Dialog(getContext());
+        dialog.setContentView(R.layout.dialog_bad_info_layout);
+        dialog.getWindow().setBackgroundDrawableResource(R.color.md_theme_light_primaryContainer);
+        TextView txt = dialog.findViewById(R.id.txtBadInfo);
+        txt.setText(msg);
+        Button tryAgain = dialog.findViewById(R.id.btnBadInfoOk);
+        tryAgain.setText("Try Again");
+        ImageButton close = dialog.findViewById(R.id.btnBadInfoClose);
+
+        tryAgain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                viewDataBinding.btnSignUp.setVisibility(View.VISIBLE);
+                viewDataBinding.progressBarSignup.setVisibility(View.INVISIBLE);
+            }
+        });
+        close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                Navigation.findNavController(requireView()).navigate(R.id.action_registerFragment_to_loginFragment);
+            }
+        });
+
+        dialog.show();
+    }
+
 }

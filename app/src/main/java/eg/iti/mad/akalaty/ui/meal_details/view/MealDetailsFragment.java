@@ -1,12 +1,15 @@
 package eg.iti.mad.akalaty.ui.meal_details.view;
 
 import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import android.util.Log;
 import android.util.Pair;
@@ -14,7 +17,10 @@ import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -28,6 +34,8 @@ import java.util.Calendar;
 import java.util.List;
 
 import eg.iti.mad.akalaty.R;
+import eg.iti.mad.akalaty.ui.MainActivity;
+import eg.iti.mad.akalaty.utils.SharedPref;
 import eg.iti.mad.akalaty.utils.Utils;
 import eg.iti.mad.akalaty.api.RemoteDataSource;
 import eg.iti.mad.akalaty.database.MealsLocalDataSource;
@@ -49,6 +57,8 @@ public class MealDetailsFragment extends Fragment implements IViewMealDetailsFra
 
     boolean isFavorite;
     Calendar calendar;
+
+    Dialog dialog;
 
     private static final String TAG = "MealDetailsFragment";
 
@@ -141,22 +151,33 @@ public class MealDetailsFragment extends Fragment implements IViewMealDetailsFra
 
         //add meal to database
         viewDataBinding.icMealDetailsHeart.setOnClickListener(view1 -> {
-            isFavorite = !isFavorite;
-            if(isFavorite){
-                viewDataBinding.icMealDetailsHeart.setImageResource(R.drawable.ic_heart_red);
-                mealDetailsPresenter.addMealToFav(singleMealItem);
-                Utils.showCustomSnackbar(requireView(),"Added to favorite");
-            }else {
-                viewDataBinding.icMealDetailsHeart.setImageResource(R.drawable.ic_heart_gray);
-                mealDetailsPresenter.deleteMealFromFav(singleMealItem);
-                Utils.showCustomSnackbar(requireView(),"Removed!");
+            if (!SharedPref.getInstance(requireContext()).getIsLogged()){
+                showLoginDialog();
             }
+            else {
+                isFavorite = !isFavorite;
+                if(isFavorite){
+                    viewDataBinding.icMealDetailsHeart.setImageResource(R.drawable.ic_heart_red);
+                    mealDetailsPresenter.addMealToFav(singleMealItem);
+                    Utils.showCustomSnackbar(requireView(),"Added to favorite");
+                }else {
+                    viewDataBinding.icMealDetailsHeart.setImageResource(R.drawable.ic_heart_gray);
+                    mealDetailsPresenter.deleteMealFromFav(singleMealItem);
+                    Utils.showCustomSnackbar(requireView(),"Removed!");
+                }
+            }
+
 
         });
 
         //add meal to calender
         viewDataBinding.icMealDetailsCalender.setOnClickListener(view -> {
-            showDatePicker(singleMealItem);
+            if (!SharedPref.getInstance(requireContext()).getIsLogged()){
+                showLoginDialog();
+            }
+            else {
+                showDatePicker(singleMealItem);
+            }
 
         });
 
@@ -195,6 +216,43 @@ public class MealDetailsFragment extends Fragment implements IViewMealDetailsFra
         datePicker.getDatePicker().setMaxDate(calendar.getTimeInMillis());
 
         datePicker.show();
+    }
+
+    private void showLoginDialog() {
+
+        dialog = new Dialog(requireContext());
+        dialog.setContentView(R.layout.dialog_action_layout);
+        dialog.getWindow().setBackgroundDrawableResource(R.color.md_theme_light_primaryContainer);
+        TextView txt = dialog.findViewById(R.id.delete_txt);
+        txt.setText("Please Login First!");
+        Button login = dialog.findViewById(R.id.btnAction);
+        login.setText("Login");
+        Button cancel = dialog.findViewById(R.id.btnCancel);
+        ImageButton close = dialog.findViewById(R.id.btnClose);
+
+        login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                Intent intent = new Intent(getActivity(), MainActivity.class);
+                startActivity(intent);
+                getActivity().finish();
+            }
+        });
+        close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
     }
 
     @Override

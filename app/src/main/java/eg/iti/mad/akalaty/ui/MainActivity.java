@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
     private void showLoginDialog() {
 
         dialog = new Dialog(this);
-        dialog.setContentView(R.layout.dialog_delete_layout);
+        dialog.setContentView(R.layout.dialog_action_layout);
         dialog.getWindow().setBackgroundDrawableResource(R.color.md_theme_light_primaryContainer);
         TextView txt = dialog.findViewById(R.id.delete_txt);
         txt.setText("Please Login First!");

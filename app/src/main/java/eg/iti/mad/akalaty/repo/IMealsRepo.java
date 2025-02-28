@@ -37,6 +37,8 @@ public interface IMealsRepo {
     public Flowable<List<SingleMealItem>> getAllStoredFavMeals();
     public Completable insertMealToFav(SingleMealItem singleMealItem);
     public Completable deleteMealFromFav(SingleMealItem singleMealItem);
+    public Completable insertAllFav(List<SingleMealItem> singleMealItem);
+    public  Completable deleteAll();
 
     //planned
     public Flowable<List<PlannedMeal>> getPlannedMealsByDate(Date date);

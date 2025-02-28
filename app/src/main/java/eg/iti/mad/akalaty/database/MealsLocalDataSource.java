@@ -54,6 +54,15 @@ public class MealsLocalDataSource implements IMealsLocalDataSource{
         return storedMeal;
     }
 
+    @Override
+    public Completable insertAll(List<SingleMealItem> singleMealItem) {
+        return favDao.insertAll(singleMealItem);
+    }
+
+    @Override
+    public Completable deleteAll() {
+        return favDao.deleteAll();
+    }
 
 
     //planned meals
