@@ -61,4 +61,5 @@
     <string name="removed">تم الحذف</string>
     <string name="added_to_calender">تمت الاضافة للتقويم</string>
     <string name="error_meal_details">خطأ في بيانات الوجبة</string>
+    <string name="akalaty">أكلاتي</string>
 </resources>
