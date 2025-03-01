@@ -19,6 +19,7 @@ import com.airbnb.lottie.LottieAnimationView;
 
 import eg.iti.mad.akalaty.R;
 import eg.iti.mad.akalaty.ui.MainActivity;
+import eg.iti.mad.akalaty.utils.SharedPref;
 
 
 public class SplashFragment extends Fragment {
@@ -50,8 +51,7 @@ public class SplashFragment extends Fragment {
             @Override
             public void run() {
 
-                SharedPreferences preferences = requireActivity().getSharedPreferences("onBoarding", Context.MODE_PRIVATE);
-                boolean isOnBoardingFinished = (preferences.getBoolean("isFinished",false));
+                boolean isOnBoardingFinished = SharedPref.getInstance(requireActivity()).getIsFinished();
 
                 if (isOnBoardingFinished){
                     Intent intent = new Intent(getContext(), MainActivity.class);

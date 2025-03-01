@@ -1,6 +1,7 @@
 package eg.iti.mad.akalaty.ui.home.view.category;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,15 +10,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 
 import java.util.List;
 
 import eg.iti.mad.akalaty.R;
 import eg.iti.mad.akalaty.model.FilteredMealsItem;
-import eg.iti.mad.akalaty.ui.home.view.OnHeartClickListener;
 import eg.iti.mad.akalaty.ui.home.view.OnMealClickListener;
 
 
@@ -27,13 +33,11 @@ public class MealsByCategoryAdapter extends RecyclerView.Adapter<MealsByCategory
     private List<FilteredMealsItem> my_list;
     private static final String TAG = "RecyclerView";
     OnMealClickListener listener;
-    OnHeartClickListener onHeartClickListener;
 
-    public MealsByCategoryAdapter(Context context, List<FilteredMealsItem> list, OnMealClickListener onMealClickListener,OnHeartClickListener onHeartClickListener) {
+    public MealsByCategoryAdapter(Context context, List<FilteredMealsItem> list, OnMealClickListener onMealClickListener) {
         this.context = context;
         this.my_list = list;
         this.listener = onMealClickListener;
-        this.onHeartClickListener = onHeartClickListener;
     }
 
     @NonNull
@@ -50,13 +54,22 @@ public class MealsByCategoryAdapter extends RecyclerView.Adapter<MealsByCategory
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         FilteredMealsItem filteredMealsItem = my_list.get(position);
         holder.txtMealName.setText(my_list.get(position).getStrMeal());
-        holder.imgHeart.setOnClickListener(view -> {
-            view.setBackgroundResource(R.drawable.ic_heart_red);
-            onHeartClickListener.onHeartIconClicked(filteredMealsItem);
-        });
+        holder.lottieAnimationView.setVisibility(View.VISIBLE);
         Glide.with(context).load(my_list.get(position).getStrMealThumb())
-                .placeholder(R.drawable.ic_launcher_background)
-                .error(R.drawable.ic_launcher_foreground)
+                .listener(new RequestListener<Drawable>() {
+                    @Override
+                    public boolean onLoadFailed(@Nullable GlideException e, @Nullable Object model, @NonNull Target<Drawable> target, boolean isFirstResource) {
+                        holder.lottieAnimationView.setVisibility(View.GONE);
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(@NonNull Drawable resource, @NonNull Object model, Target<Drawable> target, @NonNull DataSource dataSource, boolean isFirstResource) {
+                        holder.lottieAnimationView.setVisibility(View.GONE);
+                        return false;
+                    }
+                })
+                .error(R.drawable.ic_logo)
                 .into(holder.imgMeal);
         holder.layout.setOnClickListener(view -> {
             listener.onMealItemClicked(filteredMealsItem);
@@ -72,8 +85,9 @@ public class MealsByCategoryAdapter extends RecyclerView.Adapter<MealsByCategory
 
     class ViewHolder extends RecyclerView.ViewHolder{
         public ImageView imgMeal;
-        public ImageView imgHeart;
         public TextView txtMealName;
+
+        public LottieAnimationView lottieAnimationView;
 
         public View layout;
 
@@ -81,8 +95,8 @@ public class MealsByCategoryAdapter extends RecyclerView.Adapter<MealsByCategory
             super(view);
             layout = view;
             imgMeal = layout.findViewById(R.id.imgCatMealItem);
-            imgHeart = layout.findViewById(R.id.imgHeartIcon);
             txtMealName = layout.findViewById(R.id.txtCatMealName);
+            lottieAnimationView = layout.findViewById(R.id.lottieAnimationView);
 
         }
 

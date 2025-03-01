@@ -2,10 +2,19 @@ package eg.iti.mad.akalaty.auth;
 
 import android.util.Log;
 
-import com.google.firebase.auth.FirebaseAuth;
+import androidx.annotation.NonNull;
 
-import eg.iti.mad.akalaty.ui.login.view.OnLoginResponse;
-import eg.iti.mad.akalaty.ui.register.view.OnRegisterResponse;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
+
+import eg.iti.mad.akalaty.auth.firestore.FirestoreUtils;
+import eg.iti.mad.akalaty.model.AppUser;
+import eg.iti.mad.akalaty.ui.login.view.IViewLoginFragment;
+import eg.iti.mad.akalaty.ui.register.view.IViewRegisterFragment;
 
 public class MyFirebaseAuth {
     private static final String TAG = "MyFirebaseAuth";
@@ -15,7 +24,7 @@ public class MyFirebaseAuth {
     OnRegisterResponse onRegisterListener;
     OnLoginResponse onLoginResponse;
 
-    public void registerToFirebase(String email, String password, OnRegisterResponse onRegisterListener){
+    public void registerToFirebase(String email, String username, String password, OnRegisterResponse onRegisterListener){
         this.onRegisterListener = onRegisterListener;
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
@@ -23,22 +32,35 @@ public class MyFirebaseAuth {
         mAuth.createUserWithEmailAndPassword(email,password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()){
-//                      Snackbar.make(requireContext(),requireView(),"Success to auth",Snackbar.LENGTH_SHORT).show();
-//                        Toast.makeText(requireContext(), "Success", Toast.LENGTH_SHORT).show();
                         Log.e(TAG, "addAccountToFirebase: Success");
-                        onRegisterListener.setOnRegisterResponse(true,"Success");
-//                        //error here
-//                        Navigation.findNavController(requireActivity(),R.id.action_registerFragment_to_loginFragment);
+//                        onRegisterListener.setOnRegisterResponse(true,"Success");
+                        createFirestoreUser(task.getResult().getUser().getUid(),username,email,onRegisterListener);
 
                     }else {
-//                        Toast.makeText(requireContext(), "failed", Toast.LENGTH_SHORT).show();
-                        onRegisterListener.setOnRegisterResponse(false,task.getException().getLocalizedMessage());
+//                        onRegisterListener.setOnRegisterResponse(false,task.getException().getLocalizedMessage());
                         Log.e(TAG, "addAccountToFirebase: failed"+task.getException().getLocalizedMessage());
-//                      Snackbar.make(requireContext(),requireView(),"Failed to auth"+task.getException().getLocalizedMessage(),Snackbar.LENGTH_SHORT).show();
-
+                        onRegisterListener.setOnRegisterResponse(false,task.getException().getLocalizedMessage());
                     }
                 });
 
+    }
+
+    private void createFirestoreUser(String userId, String username, String email, OnRegisterResponse onRegisterListener) {
+        AppUser user = new AppUser(userId, username, email);
+        FirestoreUtils.addUserToFirestore(user,
+                new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Log.i(TAG, "onSuccess: createFirestoreUser");
+                        onRegisterListener.setOnRegisterResponse(true,"Success");
+                    }
+                }, new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.i(TAG, "onFailure: createFirestoreUser");
+                        onRegisterListener.setOnRegisterResponse(false,e.getLocalizedMessage());
+                    }
+                });
     }
 
 
@@ -50,22 +72,48 @@ public class MyFirebaseAuth {
         mAuth.signInWithEmailAndPassword(email,password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()){
-//                      Snackbar.make(requireContext(),requireView(),"Success to auth",Snackbar.LENGTH_SHORT).show();
-//                        Toast.makeText(requireContext(), "Success", Toast.LENGTH_SHORT).show();
+
                         Log.e(TAG, "loginAccountWithFirebase: Success");
-                        onLoginResponse.setOnLoginResponse(true,"Success");
-//                        //error here
-//                        Navigation.findNavController(requireActivity(),R.id.action_registerFragment_to_loginFragment);
+                        onLoginResponse.setOnLoginSuccess(task.getResult().getUser().getUid());
 
                     }else {
-//                        Toast.makeText(requireContext(), "failed", Toast.LENGTH_SHORT).show();
-                        onLoginResponse.setOnLoginResponse(false,task.getException().getLocalizedMessage());
+
+                        onLoginResponse.setOnLoginFailure(task.getException().getLocalizedMessage());
                         Log.e(TAG, "loginAccountWithFirebase: failed"+task.getException().getLocalizedMessage());
-//                      Snackbar.make(requireContext(),requireView(),"Failed to auth"+task.getException().getLocalizedMessage(),Snackbar.LENGTH_SHORT).show();
 
                     }
                 });
 
     }
+
+    public void firebaseAuthWithGoogle(String idToken, IViewLoginFragment iViewLoginFragment) {
+        mAuth = FirebaseAuth.getInstance();
+        AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        AppUser appUser = new AppUser(user.getUid(),user.getDisplayName(),user.getEmail());
+                        iViewLoginFragment.showOnUserLoginSuccessWithGoogle(appUser);
+                    } else {
+                        iViewLoginFragment.showOnUserLoginFailure("Authentication failed: " + task.getException().getMessage());
+                    }
+                });
+    }
+    public void firebaseAuthWithGoogle(String idToken, IViewRegisterFragment iViewRegisterFragment) {
+        mAuth = FirebaseAuth.getInstance();
+        AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        AppUser appUser = new AppUser(user.getUid(),user.getDisplayName(),user.getEmail());
+                        iViewRegisterFragment.showOnUserRegisterSuccessWithGoogle(appUser);
+                    } else {
+                        iViewRegisterFragment.showOnUserRegisterFailureWithGoogle("Authentication failed: " + task.getException().getMessage());
+                    }
+                });
+    }
+
 
 }

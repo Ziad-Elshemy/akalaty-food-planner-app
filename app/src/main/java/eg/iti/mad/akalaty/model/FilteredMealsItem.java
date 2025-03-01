@@ -25,6 +25,18 @@ public class FilteredMealsItem{
 		return strMeal;
 	}
 
+	public void setStrMealThumb(String strMealThumb) {
+		this.strMealThumb = strMealThumb;
+	}
+
+	public void setIdMeal(String idMeal) {
+		this.idMeal = idMeal;
+	}
+
+	public void setStrMeal(String strMeal) {
+		this.strMeal = strMeal;
+	}
+
 	@Override
  	public String toString(){
 		return 

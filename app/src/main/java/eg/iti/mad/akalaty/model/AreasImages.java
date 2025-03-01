@@ -26,6 +26,7 @@ public class AreasImages {
             put("Malaysian", R.drawable.malaysian);
             put("Mexican", R.drawable.mexican);
             put("Moroccan", R.drawable.moroccan);
+            put("Norwegian", R.drawable.norwegian);
             put("Polish", R.drawable.polish);
             put("Portuguese", R.drawable.portuguese);
             put("Russian", R.drawable.russian);
@@ -33,11 +34,16 @@ public class AreasImages {
             put("Thai", R.drawable.thai);
             put("Tunisian", R.drawable.tunisian);
             put("Turkish", R.drawable.turkish);
+            put("Ukrainian", R.drawable.ukrainian);
+            put("Uruguayan", R.drawable.uruguayan);
             put("Vietnamese", R.drawable.vietnamese);
         }
     };
 
     public static int getAreaByName(String areaName){
+        if (areasImgHashMap.get(areaName)==null){
+            return areasImgHashMap.get("Egyptian");
+        }
         return areasImgHashMap.get(areaName);
     }
 }

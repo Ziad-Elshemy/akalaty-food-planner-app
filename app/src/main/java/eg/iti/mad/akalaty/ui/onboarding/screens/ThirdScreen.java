@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import eg.iti.mad.akalaty.R;
 import eg.iti.mad.akalaty.ui.MainActivity;
+import eg.iti.mad.akalaty.utils.SharedPref;
 
 
 public class ThirdScreen extends Fragment {
@@ -42,16 +43,9 @@ public class ThirdScreen extends Fragment {
             Intent intent = new Intent(getContext(), MainActivity.class);
             startActivity(intent);
             requireActivity().finish();
-            onBoardingFinish();
+            SharedPref.getInstance(requireActivity()).setIsFinished(true);
         });
     }
 
-    private void onBoardingFinish(){
-        SharedPreferences preferences = requireActivity().getSharedPreferences("onBoarding", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        // make it true to show the onBoarding once in the first time,,, for developing it is false to test
-        editor.putBoolean("isFinished",true);
-        editor.apply();
-    }
 
 }

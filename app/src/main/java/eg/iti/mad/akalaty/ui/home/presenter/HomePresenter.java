@@ -1,24 +1,18 @@
 package eg.iti.mad.akalaty.ui.home.presenter;
 
-import java.util.List;
-
-import eg.iti.mad.akalaty.api.NetworkCallbackAllAreas;
-import eg.iti.mad.akalaty.api.NetworkCallbackAllCategories;
-import eg.iti.mad.akalaty.api.NetworkCallbackAllIngredients;
-import eg.iti.mad.akalaty.api.NetworkCallbackMealsByArea;
-import eg.iti.mad.akalaty.api.NetworkCallbackMealsByCategory;
-import eg.iti.mad.akalaty.api.NetworkCallbackMealsByIngredient;
-import eg.iti.mad.akalaty.api.NetworkCallbackRandom;
-import eg.iti.mad.akalaty.model.AreasItem;
-import eg.iti.mad.akalaty.model.CategoriesItem;
-import eg.iti.mad.akalaty.model.FilteredMealsItem;
-import eg.iti.mad.akalaty.model.IngredientsItem;
-import eg.iti.mad.akalaty.model.RandomMealsItem;
+import eg.iti.mad.akalaty.model.AreasResponse;
+import eg.iti.mad.akalaty.model.CategoriesResponse;
+import eg.iti.mad.akalaty.model.FilteredMealsResponse;
+import eg.iti.mad.akalaty.model.IngredientsResponse;
+import eg.iti.mad.akalaty.model.RandomMealResponse;
+import eg.iti.mad.akalaty.model.SingleMealByIdResponse;
 import eg.iti.mad.akalaty.repo.MealsRepo;
 import eg.iti.mad.akalaty.ui.home.view.IViewHomeFragment;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
-public class HomePresenter implements IHomePresenter , NetworkCallbackRandom, NetworkCallbackAllCategories, NetworkCallbackMealsByCategory ,
-        NetworkCallbackAllAreas, NetworkCallbackMealsByArea , NetworkCallbackAllIngredients, NetworkCallbackMealsByIngredient {
+public class HomePresenter implements IHomePresenter{
 
     IViewHomeFragment _view;
     MealsRepo _repo;
@@ -31,106 +25,130 @@ public class HomePresenter implements IHomePresenter , NetworkCallbackRandom, Ne
 
     @Override
     public void getRandomMeal() {
-        _repo.getRandomMeal(this);
+        Single<RandomMealResponse> call = _repo.getRandomMeal();
+        call.subscribeOn(Schedulers.io())
+                .map(item -> item.getRandomMeals().get(0))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        item -> {
+                            _view.showRandomMeal(item);
+                        },
+                        error -> {
+                            _view.showErrorMsg(error.getLocalizedMessage());
+                        }
+                );
     }
 
     @Override
     public void getAllCategories() {
-        _repo.getAllCategories(this);
+        Single<CategoriesResponse> call = _repo.getAllCategories();
+        call.subscribeOn(Schedulers.io())
+                .map(item -> item.getCategories())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        list -> {
+                            _view.showAllCategories(list);
+                        },
+                        error -> {
+                            _view.showErrorMsg(error.getLocalizedMessage());
+                        }
+                );
     }
 
     @Override
     public void getMealsByCategory(String catId) {
-        _repo.getMealsByCategory(this,catId);
+        Single<FilteredMealsResponse> call = _repo.getMealsByCategory(catId);
+        call.subscribeOn(Schedulers.io())
+                .map(item -> item.getFilteredMeals())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        list -> {
+                            _view.showMealsByCategory(list);
+                        },
+                        error -> {
+                            _view.showErrorMsg(error.getLocalizedMessage());
+                        }
+                );
     }
 
     @Override
     public void getAllAreas() {
-        _repo.getAllAreas(this);
+        Single<AreasResponse> call = _repo.getAllAreas();
+        call.subscribeOn(Schedulers.io())
+                .map(item -> item.getAreas())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        list -> {
+                            _view.showAllAreas(list);
+                        },
+                        error -> {
+                            _view.showErrorMsg(error.getLocalizedMessage());
+                        }
+                );
     }
 
     @Override
     public void getMealsByArea(String areaId) {
-        _repo.getMealsByArea(this,areaId);
+        Single<FilteredMealsResponse> call = _repo.getMealsByArea(areaId);
+        call.subscribeOn(Schedulers.io())
+                .map(item -> item.getFilteredMeals())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        list -> {
+                            _view.showMealsByArea(list);
+                        },
+                        error -> {
+                            _view.showErrorMsg(error.getLocalizedMessage());
+                        }
+                );
     }
 
     @Override
     public void getAllIngredient() {
-        _repo.getAllIngredients(this);
+        Single<IngredientsResponse> call = _repo.getAllIngredients();
+        call.subscribeOn(Schedulers.io())
+                .map(item -> item.getIngredients())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        list -> {
+                            _view.showAllIngredients(list);
+                        },
+                        error -> {
+                            _view.showErrorMsg(error.getLocalizedMessage());
+                        }
+                );
     }
 
     @Override
     public void getMealsByIngredient(String ingredientId) {
-        _repo.getMealsByIngredient(this,ingredientId);
+        Single<FilteredMealsResponse> call = _repo.getMealsByIngredient(ingredientId);
+        call.subscribeOn(Schedulers.io())
+                .map(item -> item.getFilteredMeals())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        list -> {
+                            _view.showMealsByIngredient(list);
+                        },
+                        error -> {
+                            _view.showErrorMsg(error.getLocalizedMessage());
+                        }
+                );
     }
 
     @Override
-    public void onSuccessRandomMealResult(RandomMealsItem randomMeal) {
-        _view.showRandomMeal(randomMeal);
+    public void getMealById(String mealId) {
+        Single<SingleMealByIdResponse> call = _repo.getMealById(mealId);
+        call.subscribeOn(Schedulers.io())
+                .map(item -> item.getSingleMeal().get(0))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        list -> {
+                            _view.showMealById(list);
+                        },
+                        error -> {
+                            _view.showErrorMsg(error.getLocalizedMessage());
+                        }
+                );
     }
 
-    @Override
-    public void onFailureRandomMealResult(String errorMsg) {
-        _view.showErrorMsg(errorMsg);
-    }
-
-    @Override
-    public void onSuccessAllCategoriesResult(List<CategoriesItem> categoriesItemList) {
-        _view.showAllCategories(categoriesItemList);
-    }
-
-    @Override
-    public void onFailureAllCategoriesResult(String errorMsg) {
-        _view.showErrorMsg(errorMsg);
-    }
-
-    @Override
-    public void onSuccessMealsByCategoryResult(List<FilteredMealsItem> filteredMealsItems) {
-        _view.showMealsByCategory(filteredMealsItems);
-    }
-
-    @Override
-    public void onFailureMealsByCategoryResult(String errorMsg) {
-        _view.showErrorMsg(errorMsg);
-    }
-
-    @Override
-    public void onSuccessAllAreasResult(List<AreasItem> areasItems) {
-        _view.showAllAreas(areasItems);
-    }
-
-    @Override
-    public void onFailureAllAreasResult(String errorMsg) {
-        _view.showErrorMsg(errorMsg);
-    }
-
-    @Override
-    public void onSuccessMealsByAreaResult(List<FilteredMealsItem> filteredMealsItems) {
-        _view.showMealsByArea(filteredMealsItems);
-    }
-
-    @Override
-    public void onFailureMealsByAreaResult(String errorMsg) {
-        _view.showErrorMsg(errorMsg);
-    }
-
-    @Override
-    public void onSuccessAllIngredientsResult(List<IngredientsItem> ingredientsItems) {
-        _view.showAllIngredients(ingredientsItems);
-    }
-
-    @Override
-    public void onFailureAllIngredientsResult(String errorMsg) {
-        _view.showErrorMsg(errorMsg);
-    }
-
-    @Override
-    public void onSuccessMealsByIngredientResult(List<FilteredMealsItem> filteredMealsItems) {
-        _view.showMealsByIngredient(filteredMealsItems);
-    }
-
-    @Override
-    public void onFailureMealsByIngredientResult(String errorMsg) {
-        _view.showErrorMsg(errorMsg);
-    }
 }
