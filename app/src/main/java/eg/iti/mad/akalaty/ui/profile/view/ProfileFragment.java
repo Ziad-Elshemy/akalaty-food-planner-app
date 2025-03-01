@@ -1,6 +1,7 @@
 package eg.iti.mad.akalaty.ui.profile.view;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -27,9 +28,11 @@ import eg.iti.mad.akalaty.api.RemoteDataSource;
 import eg.iti.mad.akalaty.database.MealsLocalDataSource;
 import eg.iti.mad.akalaty.databinding.FragmentProfileBinding;
 import eg.iti.mad.akalaty.repo.MealsRepo;
+import eg.iti.mad.akalaty.ui.MainActivity;
 import eg.iti.mad.akalaty.ui.profile.presenter.ProfilePresenter;
 import eg.iti.mad.akalaty.utils.NetworkUtils;
 import eg.iti.mad.akalaty.utils.SharedPref;
+import eg.iti.mad.akalaty.utils.Utils;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
@@ -88,11 +91,16 @@ public class ProfileFragment extends Fragment  implements IViewProfileFragment{
         });
 
         viewDataBinding.btnBackup.setOnClickListener(view1 -> {
-
+            viewDataBinding.progressBarUpload.setVisibility(View.VISIBLE);
+            viewDataBinding.btnBackup.setVisibility(View.INVISIBLE);
+            viewDataBinding.btnDownload.setEnabled(false);
             profilePresenter.uploadDataToFirestore(SharedPref.getInstance(requireActivity()).getUserId());
         });
 
         viewDataBinding.btnDownload.setOnClickListener(view1 -> {
+            viewDataBinding.progressBarDownload.setVisibility(View.VISIBLE);
+            viewDataBinding.btnDownload.setVisibility(View.INVISIBLE);
+            viewDataBinding.btnBackup.setEnabled(false);
             profilePresenter.downloadDataFromFirestore(SharedPref.getInstance(requireActivity()).getUserId());
         });
 
@@ -132,9 +140,9 @@ public class ProfileFragment extends Fragment  implements IViewProfileFragment{
         dialog.setContentView(R.layout.dialog_action_layout);
         dialog.getWindow().setBackgroundDrawableResource(R.color.md_theme_light_primaryContainer);
         TextView txt = dialog.findViewById(R.id.delete_txt);
-        txt.setText("Are you sure you \nwant to logout?");
+        txt.setText(R.string.are_you_sure_you_want_to_logout);
         Button logout = dialog.findViewById(R.id.btnAction);
-        logout.setText("Logout");
+        logout.setText(R.string.log_out);
         Button cancel = dialog.findViewById(R.id.btnCancel);
         ImageButton close = dialog.findViewById(R.id.btnClose);
 
@@ -143,7 +151,10 @@ public class ProfileFragment extends Fragment  implements IViewProfileFragment{
             public void onClick(View view) {
                 dialog.dismiss();
 
-                profilePresenter.logout();
+                viewDataBinding.progressBarLogout.setVisibility(View.VISIBLE);
+                viewDataBinding.btnLogout.setVisibility(View.INVISIBLE);
+
+                profilePresenter.logout(requireActivity());
 
             }
         });
@@ -166,35 +177,61 @@ public class ProfileFragment extends Fragment  implements IViewProfileFragment{
 
     @Override
     public void showOnUploadSuccess(String msg) {
-        Toast.makeText(requireActivity(), msg, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(requireActivity(), msg, Toast.LENGTH_SHORT).show();
+        viewDataBinding.progressBarUpload.setVisibility(View.INVISIBLE);
+        viewDataBinding.btnBackup.setVisibility(View.VISIBLE);
+        viewDataBinding.btnDownload.setEnabled(true);
+        Utils.showCustomSnackbar(requireView(),msg);
     }
 
     @Override
     public void showOnUploadFailure(String msg) {
-        Toast.makeText(requireActivity(), msg, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(requireActivity(), msg, Toast.LENGTH_SHORT).show();
+        viewDataBinding.progressBarUpload.setVisibility(View.INVISIBLE);
+        viewDataBinding.btnBackup.setVisibility(View.VISIBLE);
+        viewDataBinding.btnDownload.setEnabled(true);
+        Utils.showCustomSnackbar(requireView(),msg);
     }
 
     @Override
     public void showOnDownloadSuccess(String msg) {
-
+        viewDataBinding.progressBarDownload.setVisibility(View.INVISIBLE);
+        viewDataBinding.btnDownload.setVisibility(View.VISIBLE);
+        viewDataBinding.btnBackup.setEnabled(true);
+        Utils.showCustomSnackbar(requireView(),msg);
     }
 
     @Override
     public void showOnDownloadFailure(String msg) {
-
+        viewDataBinding.progressBarDownload.setVisibility(View.INVISIBLE);
+        viewDataBinding.btnDownload.setVisibility(View.VISIBLE);
+        viewDataBinding.btnBackup.setEnabled(true);
+        Utils.showCustomSnackbar(requireView(),msg);
     }
 
     @Override
     public void showOnLogoutSuccess(String msg) {
-        SharedPref.getInstance(requireActivity()).setIsLogged(false);
-        SharedPref.getInstance(requireActivity()).setUserId("");
-        SharedPref.getInstance(requireActivity()).setUserName("");
-        SharedPref.getInstance(requireActivity()).setUserEmail("");
-        Navigation.findNavController(requireView()).navigate(R.id.action_profileFragment_to_loginFragment);
+        viewDataBinding.progressBarLogout.setVisibility(View.INVISIBLE);
+        viewDataBinding.btnLogout.setVisibility(View.VISIBLE);
+        clearSharedPrefData();
+        Utils.showCustomSnackbar(requireView(),msg);
+//        Navigation.findNavController(requireView()).navigate(R.id.action_profileFragment_to_loginFragment);
+        Intent intent = new Intent(getActivity(), MainActivity.class);
+        startActivity(intent);
+        getActivity().finish();
     }
 
     @Override
     public void showOnLogoutFailure(String msg) {
+        viewDataBinding.progressBarLogout.setVisibility(View.INVISIBLE);
+        viewDataBinding.btnLogout.setVisibility(View.VISIBLE);
+        Utils.showCustomSnackbar(requireView(),msg);
+    }
 
+    private void clearSharedPrefData() {
+        SharedPref.getInstance(requireActivity()).setIsLogged(false);
+        SharedPref.getInstance(requireActivity()).setUserId("");
+        SharedPref.getInstance(requireActivity()).setUserName("");
+        SharedPref.getInstance(requireActivity()).setUserEmail("");
     }
 }

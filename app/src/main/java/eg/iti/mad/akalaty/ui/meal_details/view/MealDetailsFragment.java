@@ -168,11 +168,11 @@ public class MealDetailsFragment extends Fragment implements IViewMealDetailsFra
                 if(isFavorite){
                     viewDataBinding.icMealDetailsHeart.setImageResource(R.drawable.ic_heart_red);
                     mealDetailsPresenter.addMealToFav(singleMealItem);
-                    Utils.showCustomSnackbar(requireView(),"Added to favorite");
+                    Utils.showCustomSnackbar(requireView(),getString(R.string.added_to_favorite));
                 }else {
                     viewDataBinding.icMealDetailsHeart.setImageResource(R.drawable.ic_heart_gray);
                     mealDetailsPresenter.deleteMealFromFav(singleMealItem);
-                    Utils.showCustomSnackbar(requireView(),"Removed!");
+                    Utils.showCustomSnackbar(requireView(),getString(R.string.removed));
                 }
             }
 
@@ -213,7 +213,7 @@ public class MealDetailsFragment extends Fragment implements IViewMealDetailsFra
                     clearCalenderTime();
                     Log.i(TAG, "showMealDetails: calender "+calendar.getTime());
                     mealDetailsPresenter.addMealToPlanned(new PlannedMeal(calendar.getTime(),singleMealItem));
-                    Utils.showCustomSnackbar(requireView(),"Added to calender");
+                    Utils.showCustomSnackbar(requireView(),getString(R.string.added_to_calender));
                 }
             },
             calendar.get(Calendar.YEAR),
@@ -233,9 +233,9 @@ public class MealDetailsFragment extends Fragment implements IViewMealDetailsFra
         dialog.setContentView(R.layout.dialog_action_layout);
         dialog.getWindow().setBackgroundDrawableResource(R.color.md_theme_light_primaryContainer);
         TextView txt = dialog.findViewById(R.id.delete_txt);
-        txt.setText("Please Login First!");
+        txt.setText(R.string.please_login_first);
         Button login = dialog.findViewById(R.id.btnAction);
-        login.setText("Login");
+        login.setText(R.string.login);
         Button cancel = dialog.findViewById(R.id.btnCancel);
         ImageButton close = dialog.findViewById(R.id.btnClose);
 
@@ -267,7 +267,7 @@ public class MealDetailsFragment extends Fragment implements IViewMealDetailsFra
     @Override
     public void showErrorMsg(String errorMsg) {
 //        Toast.makeText(requireContext(), "error meal details", Toast.LENGTH_SHORT).show();
-        Utils.showCustomSnackbar(requireView(),"error meal details");
+        Utils.showCustomSnackbar(requireView(),getString(R.string.error_meal_details));
     }
 
 

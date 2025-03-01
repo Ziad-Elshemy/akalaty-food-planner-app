@@ -138,8 +138,9 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
-                    app:layout_constraintStart_toStartOf="@id/guideline"
-                    app:layout_constraintEnd_toEndOf="@id/guideline2"
+                    android:layout_marginHorizontal="10dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/txtYourName"
                     app:boxBackgroundColor="@color/colorTransparent">
 
@@ -165,8 +166,9 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
-                    app:layout_constraintStart_toStartOf="@id/guideline"
-                    app:layout_constraintEnd_toEndOf="@id/guideline2"
+                    android:layout_marginHorizontal="10dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/textView2"
                     app:boxBackgroundColor="@color/colorTransparent">
 
@@ -192,8 +194,9 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
-                    app:layout_constraintStart_toStartOf="@id/guideline"
-                    app:layout_constraintEnd_toEndOf="@id/guideline2"
+                    android:layout_marginHorizontal="10dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/textView3"
                     app:boxBackgroundColor="@color/colorTransparent">
 

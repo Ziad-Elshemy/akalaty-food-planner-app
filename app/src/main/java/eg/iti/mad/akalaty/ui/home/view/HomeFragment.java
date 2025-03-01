@@ -284,10 +284,9 @@ public class HomeFragment extends Fragment implements IViewHomeFragment , OnCate
 
     @Override
     public void onMealItemClicked(FilteredMealsItem filteredMealsItem) {
-        Toast.makeText(requireContext(), ""+filteredMealsItem.getStrMeal(), Toast.LENGTH_SHORT).show();
+//        Toast.makeText(requireContext(), ""+filteredMealsItem.getStrMeal(), Toast.LENGTH_SHORT).show();
         HomeFragmentDirections.ActionHomeFragmentToMealDetailsFragment action = HomeFragmentDirections.actionHomeFragmentToMealDetailsFragment(filteredMealsItem.getIdMeal());
         Navigation.findNavController(viewDataBinding.getRoot()).navigate(action);
-//        Navigation.findNavController(this).navigate(R.id);
     }
 
     @Override
