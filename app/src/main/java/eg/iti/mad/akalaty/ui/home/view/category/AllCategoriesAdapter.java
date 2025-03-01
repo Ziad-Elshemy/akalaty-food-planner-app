@@ -68,7 +68,7 @@ public class AllCategoriesAdapter extends RecyclerView.Adapter<AllCategoriesAdap
                         return false;
                     }
                 })
-                .error(R.drawable.ic_launcher_foreground)
+                .error(R.drawable.ic_logo)
                 .into(holder.imgCategory);
         holder.layout.setOnClickListener(view -> {
             listener.onCategoryItemClicked(categoriesItem);

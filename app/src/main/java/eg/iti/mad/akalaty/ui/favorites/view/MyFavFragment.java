@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,10 +26,11 @@ import eg.iti.mad.akalaty.databinding.FragmentMyFavBinding;
 import eg.iti.mad.akalaty.model.SingleMealItem;
 import eg.iti.mad.akalaty.repo.MealsRepo;
 import eg.iti.mad.akalaty.ui.favorites.presenter.FavPresenter;
+import eg.iti.mad.akalaty.ui.search.view.SearchFragmentDirections;
 import eg.iti.mad.akalaty.utils.Utils;
 
 
-public class MyFavFragment extends Fragment implements IViewMyFavFragment, OnRemoveClickListener {
+public class MyFavFragment extends Fragment implements IViewMyFavFragment, OnItemClickListener {
 
     FragmentMyFavBinding viewDataBinding;
 
@@ -83,6 +85,12 @@ public class MyFavFragment extends Fragment implements IViewMyFavFragment, OnRem
     @Override
     public void onRemoveClicked(SingleMealItem singleMealItem) {
         showDeletePopup(singleMealItem);
+    }
+
+    @Override
+    public void onItemClicked(SingleMealItem singleMealItem) {
+        MyFavFragmentDirections.ActionMyFavFragmentToMealDetailsFragment action = MyFavFragmentDirections.actionMyFavFragmentToMealDetailsFragment(singleMealItem.getIdMeal());
+        Navigation.findNavController(viewDataBinding.getRoot()).navigate(action);
     }
 
 

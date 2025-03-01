@@ -48,8 +48,8 @@ public class MealBySelectorSearchAdapter extends RecyclerView.Adapter<MealBySele
         FilteredMealsItem filteredMealsItem = my_list.get(position);
         holder.txtItemSearch.setText(my_list.get(position).getStrMeal());
         Glide.with(context).load(my_list.get(position).getStrMealThumb())
-                .placeholder(R.drawable.ic_launcher_background)
-                .error(R.drawable.ic_launcher_foreground)
+                .placeholder(R.drawable.ic_logo)
+                .error(R.drawable.ic_logo)
                 .into(holder.imgItemSearch);
         holder.layout.setOnClickListener(view -> {
             listener.onMealItemClicked(filteredMealsItem);

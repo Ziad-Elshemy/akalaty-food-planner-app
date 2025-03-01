@@ -405,7 +405,7 @@ public class SearchFragment extends Fragment implements IViewSearchFragment,
 
     @Override
     public void onMealItemClicked(FilteredMealsItem filteredMealsItem) {
-        Toast.makeText(requireContext(), ""+filteredMealsItem.getStrMeal(), Toast.LENGTH_SHORT).show();
+//        Toast.makeText(requireContext(), ""+filteredMealsItem.getStrMeal(), Toast.LENGTH_SHORT).show();
         SearchFragmentDirections.ActionSearchFragmentToMealDetailsFragment action = SearchFragmentDirections.actionSearchFragmentToMealDetailsFragment(filteredMealsItem.getIdMeal());
         Navigation.findNavController(viewDataBinding.getRoot()).navigate(action);
     }

@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -27,12 +26,12 @@ public class MyFavAdapter extends RecyclerView.Adapter<MyFavAdapter.ViewHolder> 
     private List<SingleMealItem> my_list;
     private static final String TAG = "RecyclerView";
 
-    OnRemoveClickListener listener;
+    OnItemClickListener listener;
 
-    public MyFavAdapter(Context context, List<SingleMealItem> list, OnRemoveClickListener onRemoveClickListener) {
+    public MyFavAdapter(Context context, List<SingleMealItem> list, OnItemClickListener onItemClickListener) {
         this.context = context;
         this.my_list = list;
-        this.listener = onRemoveClickListener;
+        this.listener = onItemClickListener;
     }
 
     @NonNull
@@ -49,8 +48,8 @@ public class MyFavAdapter extends RecyclerView.Adapter<MyFavAdapter.ViewHolder> 
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         SingleMealItem singleMealItem = my_list.get(position);
         Glide.with(context).load(singleMealItem.getStrMealThumb())
-                .placeholder(R.drawable.ic_launcher_background)
-                .error(R.drawable.ic_launcher_foreground)
+                .placeholder(R.drawable.ic_logo)
+                .error(R.drawable.ic_logo)
                 .into(holder.imgMealImage);
         holder.txtMealName.setText(my_list.get(position).getStrMeal());
         holder.txtMealCat.setText(my_list.get(position).getStrCategory());
@@ -58,7 +57,7 @@ public class MyFavAdapter extends RecyclerView.Adapter<MyFavAdapter.ViewHolder> 
             listener.onRemoveClicked(singleMealItem);
         });
         holder.constraintLayout.setOnClickListener(view -> {
-
+            listener.onItemClicked(singleMealItem);
         });
         Log.i(TAG, "=========onBindViewHolder===========");
 

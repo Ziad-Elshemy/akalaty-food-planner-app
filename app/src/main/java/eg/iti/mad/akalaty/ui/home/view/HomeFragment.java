@@ -93,66 +93,28 @@ public class HomeFragment extends Fragment implements IViewHomeFragment , OnCate
 
         observeInternetStatus();
 
+        setAdapters();
+
+        homePresenter = new HomePresenter(this, MealsRepo.getInstance(RemoteDataSource.getInstance(), MealsLocalDataSource.getInstance(requireContext())));
+
+    }
+
+    private void setAdapters() {
+
+        //init
         allCategoriesAdapter = new AllCategoriesAdapter(getContext(),new ArrayList<>(),this);
         mealsByCategoryAdapter = new MealsByCategoryAdapter(getContext(),new ArrayList<>(),this);
         allAreasAdapter = new AllAreasAdapter(getContext(),new ArrayList<>(),this);
         mealsByAreaAdapter = new MealsByAreaAdapter(getContext(),new ArrayList<>(),this);
         allIngredientsAdapter = new AllIngredientsAdapter(getContext(),new ArrayList<>(),this);
         mealsByIngredientAdapter = new MealsByIngredientAdapter(getContext(),new ArrayList<>(),this);
-
+        //set
         viewDataBinding.recyclerViewCatList.setAdapter(allCategoriesAdapter);
         viewDataBinding.recyclerViewMealsByCat.setAdapter(mealsByCategoryAdapter);
         viewDataBinding.recyclerViewAreaList.setAdapter(allAreasAdapter);
         viewDataBinding.recyclerViewMealsByArea.setAdapter(mealsByAreaAdapter);
         viewDataBinding.recyclerViewIngredientList.setAdapter(allIngredientsAdapter);
         viewDataBinding.recyclerViewMealsByIngredient.setAdapter(mealsByIngredientAdapter);
-
-        homePresenter = new HomePresenter(this, MealsRepo.getInstance(RemoteDataSource.getInstance(), MealsLocalDataSource.getInstance(requireContext())));
-
-        setRandomMeal();
-
-
-
-
-        homePresenter.getAllCategories();
-        homePresenter.getMealsByCategory("Beef");
-        homePresenter.getAllAreas();
-        homePresenter.getMealsByArea("American");
-        homePresenter.getAllIngredient();
-        homePresenter.getMealsByIngredient("chicken_breast");
-
-
-
-//        //test getAllCategories api
-//        RemoteDataSource.getApis().getAllCategories().enqueue(new Callback<CategoriesResponse>() {
-//            @Override
-//            public void onResponse(Call<CategoriesResponse> call, Response<CategoriesResponse> response) {
-//                Toast.makeText(getContext(), "getAllCategories: onResponse", Toast.LENGTH_SHORT).show();
-//            }
-//
-//            @Override
-//            public void onFailure(Call<CategoriesResponse> call, Throwable throwable) {
-//                Toast.makeText(getContext(), "getAllCategories: onFailure", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-
-
-//        //test getMealDetails api
-//        RemoteDataSource.getApis().getMealDetails("52980").enqueue(new Callback<MealDetailsResponse>() {
-//            @Override
-//            public void onResponse(Call<MealDetailsResponse> call, Response<MealDetailsResponse> response) {
-//                Toast.makeText(getContext(), "getMealDetails: onResponse", Toast.LENGTH_SHORT).show();
-//            }
-//
-//            @Override
-//            public void onFailure(Call<MealDetailsResponse> call, Throwable throwable) {
-//                Toast.makeText(getContext(), "getMealDetails: onFailure", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-
-//        //test getMealDetails api
-//        RemoteDataSource.getInstance().getRandomMeal(this);
-
     }
 
     private void setRandomMeal() {
@@ -238,7 +200,7 @@ public class HomeFragment extends Fragment implements IViewHomeFragment , OnCate
                     }
                 })
 //                .placeholder(R.drawable.ic_launcher_background)
-                .error(R.drawable.ic_launcher_foreground)
+                .error(R.drawable.ic_logo)
                 .into(viewDataBinding.imgRandomMeal);
         viewDataBinding.imgMealArea.setImageResource(AreasImages.getAreaByName(randomMealsItem.getStrArea()));
         viewDataBinding.txtMealName.setText(randomMealsItem.getStrMeal());
@@ -273,7 +235,7 @@ public class HomeFragment extends Fragment implements IViewHomeFragment , OnCate
                     }
                 })
 //                .placeholder(R.drawable.ic_launcher_background)
-                .error(R.drawable.ic_launcher_foreground)
+                .error(R.drawable.ic_logo)
                 .into(viewDataBinding.imgRandomMeal);
         viewDataBinding.imgMealArea.setImageResource(AreasImages.getAreaByName(singleMealItem.getStrArea()));
         viewDataBinding.txtMealName.setText(singleMealItem.getStrMeal());

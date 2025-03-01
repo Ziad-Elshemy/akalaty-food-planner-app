@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
 
 import android.util.Log;
 import android.util.Pair;
@@ -35,6 +34,7 @@ import java.util.List;
 
 import eg.iti.mad.akalaty.R;
 import eg.iti.mad.akalaty.ui.MainActivity;
+import eg.iti.mad.akalaty.utils.NetworkUtils;
 import eg.iti.mad.akalaty.utils.SharedPref;
 import eg.iti.mad.akalaty.utils.Utils;
 import eg.iti.mad.akalaty.api.RemoteDataSource;
@@ -88,12 +88,21 @@ public class MealDetailsFragment extends Fragment implements IViewMealDetailsFra
         viewDataBinding.recyclerViewMealIngredientsList.setAdapter(mealDetailsIngredientsAdapter);
         viewDataBinding.recyclerViewMealInstructionList.setAdapter(mealDetailsInstructionsAdapter);
         mealDetailsPresenter = new MealDetailsPresenter(this, MealsRepo.getInstance(RemoteDataSource.getInstance(), MealsLocalDataSource.getInstance(requireContext())));
-        mealDetailsPresenter.getMailById(mealId);
-
-
+//        mealDetailsPresenter.getMailById(mealId);
+        getMealDetails(mealId);
 
 
     }
+
+    public void getMealDetails(String mealId) {
+        if (NetworkUtils.isInternetAvailable(requireContext())) {
+             mealDetailsPresenter.getOnlineMealById(mealId);
+        } else {
+             mealDetailsPresenter.getFavMealById(mealId);
+        }
+    }
+
+
 
     private List<Pair<String, String>> createIngredientPairs(SingleMealItem meal) {
         List<Pair<String, String>> pairList = new ArrayList<>();
@@ -137,11 +146,11 @@ public class MealDetailsFragment extends Fragment implements IViewMealDetailsFra
         viewDataBinding.txtMealDetailsName.setText(singleMealItem.getStrMeal());
         viewDataBinding.txtMealDetailsCat.setText(singleMealItem.getStrCategory());
         Glide.with(requireActivity()).load(singleMealItem.getStrMealThumb())
-                .placeholder(R.drawable.ic_launcher_background)
-                .error(R.drawable.ic_launcher_foreground)
+                .placeholder(R.drawable.ic_logo)
+                .error(R.drawable.ic_logo)
                 .into(viewDataBinding.imgMealDetailsImage);
         viewDataBinding.imgMealDetailsArea.setImageResource(AreasImages.getAreaByName(singleMealItem.getStrArea()));
-        Toast.makeText(requireContext(), "ziad success meal details", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(requireContext(), "ziad success meal details", Toast.LENGTH_SHORT).show();
 
         mealDetailsIngredientsAdapter.changeData(createIngredientPairs(singleMealItem));
         List<String> instructionsList = Arrays.asList(singleMealItem.getStrInstructions().split("\r\n"));
@@ -257,7 +266,8 @@ public class MealDetailsFragment extends Fragment implements IViewMealDetailsFra
 
     @Override
     public void showErrorMsg(String errorMsg) {
-        Toast.makeText(requireContext(), "error meal details", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(requireContext(), "error meal details", Toast.LENGTH_SHORT).show();
+        Utils.showCustomSnackbar(requireView(),"error meal details");
     }
 
 

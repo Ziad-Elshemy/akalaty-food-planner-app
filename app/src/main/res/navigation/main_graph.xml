@@ -9,7 +9,11 @@
         android:id="@+id/myFavFragment"
         android:name="eg.iti.mad.akalaty.ui.favorites.view.MyFavFragment"
         android:label="fragment_my_fav"
-        tools:layout="@layout/fragment_my_fav" />
+        tools:layout="@layout/fragment_my_fav" >
+        <action
+            android:id="@+id/action_myFavFragment_to_mealDetailsFragment"
+            app:destination="@id/mealDetailsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/homeFragment"
         android:name="eg.iti.mad.akalaty.ui.home.view.HomeFragment"
@@ -23,7 +27,11 @@
         android:id="@+id/calenderFragment"
         android:name="eg.iti.mad.akalaty.ui.calender.view.CalendarFragment"
         android:label="fragment_calender"
-        tools:layout="@layout/fragment_calendar" />
+        tools:layout="@layout/fragment_calendar" >
+        <action
+            android:id="@+id/action_calenderFragment_to_mealDetailsFragment"
+            app:destination="@id/mealDetailsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/searchFragment"
         android:name="eg.iti.mad.akalaty.ui.search.view.SearchFragment"

@@ -48,8 +48,8 @@ public class AllIngredientsSearchAdapter extends RecyclerView.Adapter<AllIngredi
         IngredientsItem ingredientsItem = my_list.get(position);
         holder.txtItemSearch.setText(my_list.get(position).getStrIngredient());
         Glide.with(context).load("https://www.themealdb.com/images/ingredients/"+my_list.get(position).getStrIngredient()+"-Small.png")
-                .placeholder(R.drawable.ic_launcher_background)
-                .error(R.drawable.ic_launcher_foreground)
+                .placeholder(R.drawable.ic_logo)
+                .error(R.drawable.ic_logo)
                 .into(holder.imgItemSearch);
         holder.layout.setOnClickListener(view -> {
             listener.onIngredientItemClicked(ingredientsItem);

@@ -48,8 +48,8 @@ public class AllCategoriesSearchAdapter extends RecyclerView.Adapter<AllCategori
         CategoriesItem categoriesItem = my_list.get(position);
         holder.txtItemSearch.setText(my_list.get(position).getStrCategory());
         Glide.with(context).load(my_list.get(position).getStrCategoryThumb())
-                .placeholder(R.drawable.ic_launcher_background)
-                .error(R.drawable.ic_launcher_foreground)
+                .placeholder(R.drawable.ic_logo)
+                .error(R.drawable.ic_logo)
                 .into(holder.imgItemSearch);
         holder.layout.setOnClickListener(view -> {
             listener.onCategoryItemClicked(categoriesItem);

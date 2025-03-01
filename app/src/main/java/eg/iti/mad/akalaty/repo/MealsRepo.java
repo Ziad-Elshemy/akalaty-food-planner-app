@@ -11,7 +11,6 @@ import eg.iti.mad.akalaty.model.AreasResponse;
 import eg.iti.mad.akalaty.model.CategoriesResponse;
 import eg.iti.mad.akalaty.model.FilteredMealsResponse;
 import eg.iti.mad.akalaty.model.IngredientsResponse;
-import eg.iti.mad.akalaty.model.MealDetailsResponse;
 import eg.iti.mad.akalaty.model.PlannedMeal;
 import eg.iti.mad.akalaty.model.RandomMealResponse;
 import eg.iti.mad.akalaty.model.SingleMealByIdResponse;
@@ -112,8 +111,13 @@ public class MealsRepo implements IMealsRepo{
     }
 
     @Override
-    public Completable deleteAll() {
-        return mealsLocalDataSource.deleteAll();
+    public Completable deleteAllFav() {
+        return mealsLocalDataSource.deleteAllFav();
+    }
+
+    @Override
+    public Single<SingleMealItem> getStoredMealsById(String mealId) {
+        return mealsLocalDataSource.getMealById(mealId);
     }
 
     @Override
@@ -129,5 +133,25 @@ public class MealsRepo implements IMealsRepo{
     @Override
     public Completable deleteMealFromPlanned(PlannedMeal plannedMeal) {
         return mealsLocalDataSource.deletePlannedMeal(plannedMeal);
+    }
+
+    @Override
+    public Single<PlannedMeal> getPlannedMealsById(String mealId) {
+        return mealsLocalDataSource.getPlanedMealById(mealId);
+    }
+
+    @Override
+    public Flowable<List<PlannedMeal>> getAllStoredPlannedMeals() {
+        return mealsLocalDataSource.getAllPlannedMeals();
+    }
+
+    @Override
+    public Completable insertAllPlanned(List<PlannedMeal> plannedMealList) {
+        return mealsLocalDataSource.insertAllPlanned(plannedMealList);
+    }
+
+    @Override
+    public Completable deleteAllPlanned() {
+        return mealsLocalDataSource.deleteAllPlanned();
     }
 }

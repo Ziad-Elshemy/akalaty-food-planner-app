@@ -23,7 +23,7 @@ public class MealDetailsPresenter implements IMealDetailsPresenter{
     }
 
     @Override
-    public void getMailById(String mealId) {
+    public void getOnlineMealById(String mealId) {
         Single<SingleMealByIdResponse> call = _repo.getMealById(mealId);
         call.subscribeOn(Schedulers.io())
                 .map(item -> item.getSingleMeal().get(0))
@@ -53,6 +53,21 @@ public class MealDetailsPresenter implements IMealDetailsPresenter{
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe();
+    }
+
+    @Override
+    public void getFavMealById(String mealId) {
+        _repo.getStoredMealsById(mealId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        item -> {
+                            _view.showMealDetails(item);
+                        },
+                        error -> {
+                            _view.showErrorMsg(error.getLocalizedMessage());
+                        }
+                );
     }
 
     @Override

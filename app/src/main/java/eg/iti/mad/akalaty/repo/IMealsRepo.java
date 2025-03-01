@@ -7,7 +7,6 @@ import eg.iti.mad.akalaty.model.AreasResponse;
 import eg.iti.mad.akalaty.model.CategoriesResponse;
 import eg.iti.mad.akalaty.model.FilteredMealsResponse;
 import eg.iti.mad.akalaty.model.IngredientsResponse;
-import eg.iti.mad.akalaty.model.MealDetailsResponse;
 import eg.iti.mad.akalaty.model.PlannedMeal;
 import eg.iti.mad.akalaty.model.RandomMealResponse;
 import eg.iti.mad.akalaty.model.SingleMealByIdResponse;
@@ -38,11 +37,16 @@ public interface IMealsRepo {
     public Completable insertMealToFav(SingleMealItem singleMealItem);
     public Completable deleteMealFromFav(SingleMealItem singleMealItem);
     public Completable insertAllFav(List<SingleMealItem> singleMealItem);
-    public  Completable deleteAll();
+    public  Completable deleteAllFav();
+    public Single<SingleMealItem> getStoredMealsById(String mealId);
 
     //planned
     public Flowable<List<PlannedMeal>> getPlannedMealsByDate(Date date);
     public Completable insertMealToPlanned(PlannedMeal plannedMeal);
     public Completable deleteMealFromPlanned(PlannedMeal plannedMeal);
+    public Single<PlannedMeal> getPlannedMealsById(String mealId);
+    public Flowable<List<PlannedMeal>> getAllStoredPlannedMeals();
+    public Completable insertAllPlanned(List<PlannedMeal> plannedMealList);
+    public  Completable deleteAllPlanned();
 
 }

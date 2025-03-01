@@ -4,10 +4,11 @@ import eg.iti.mad.akalaty.model.PlannedMeal;
 import eg.iti.mad.akalaty.model.SingleMealItem;
 
 public interface IMealDetailsPresenter {
-    void getMailById(String mealId);
+    void getOnlineMealById(String mealId);
 
     void addMealToFav(SingleMealItem singleMealItem);
     void deleteMealFromFav(SingleMealItem singleMealItem);
+    void getFavMealById(String mealId);
 
 
     //planned
