@@ -19,8 +19,6 @@ import java.util.List;
 
 import eg.iti.mad.akalaty.R;
 import eg.iti.mad.akalaty.model.PlannedMeal;
-import eg.iti.mad.akalaty.model.SingleMealItem;
-import eg.iti.mad.akalaty.ui.favorites.view.OnRemoveClickListener;
 
 public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHolder> {
 
@@ -50,8 +48,8 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHo
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         PlannedMeal plannedMeal = my_list.get(position);
         Glide.with(context).load(plannedMeal.getMeal().getStrMealThumb())
-                .placeholder(R.drawable.ic_launcher_background)
-                .error(R.drawable.ic_launcher_foreground)
+                .placeholder(R.drawable.ic_logo)
+                .error(R.drawable.ic_logo)
                 .into(holder.imgMealImage);
         holder.txtMealName.setText(my_list.get(position).getMeal().getStrMeal());
         holder.txtMealCat.setText(my_list.get(position).getMeal().getStrCategory());
@@ -59,7 +57,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHo
             listener.onRemovePlannedClicked(plannedMeal);
         });
         holder.constraintLayout.setOnClickListener(view -> {
-
+            listener.onItemClicked(plannedMeal.getMeal());
         });
         Log.i(TAG, "=========onBindViewHolder===========");
 

@@ -20,14 +20,20 @@ import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.util.concurrent.TimeUnit;
+
 import eg.iti.mad.akalaty.R;
 import eg.iti.mad.akalaty.api.RemoteDataSource;
 import eg.iti.mad.akalaty.database.MealsLocalDataSource;
 import eg.iti.mad.akalaty.databinding.FragmentProfileBinding;
 import eg.iti.mad.akalaty.repo.MealsRepo;
 import eg.iti.mad.akalaty.ui.profile.presenter.ProfilePresenter;
+import eg.iti.mad.akalaty.utils.NetworkUtils;
 import eg.iti.mad.akalaty.utils.SharedPref;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class ProfileFragment extends Fragment  implements IViewProfileFragment{
 
@@ -53,6 +59,7 @@ public class ProfileFragment extends Fragment  implements IViewProfileFragment{
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        observeInternetStatus();
         profilePresenter = new ProfilePresenter(this, MealsRepo.getInstance(RemoteDataSource.getInstance(), MealsLocalDataSource.getInstance(requireActivity())),requireContext());
 
         viewDataBinding.txtUsername.setText(SharedPref.getInstance(requireActivity()).getUserName());
@@ -95,6 +102,28 @@ public class ProfileFragment extends Fragment  implements IViewProfileFragment{
     public void onDestroy() {
         super.onDestroy();
         profilePresenter.clearDisposables();
+        disposables.clear();
+    }
+
+    private void observeInternetStatus() {
+        disposables.add(
+                Observable.interval(0, 1, TimeUnit.SECONDS)
+                        .subscribeOn(Schedulers.io())
+                        .map(tick -> NetworkUtils.isInternetAvailable(requireContext()))
+                        .distinctUntilChanged()
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(this::updateUi)
+        );
+    }
+
+    private void updateUi(boolean isConnected) {
+        if (isConnected) {
+            viewDataBinding.noInternetScene.setVisibility(View.GONE);
+            viewDataBinding.profileScene.setVisibility(View.VISIBLE);
+        } else {
+            viewDataBinding.noInternetScene.setVisibility(View.VISIBLE);
+            viewDataBinding.profileScene.setVisibility(View.GONE);
+        }
     }
 
     private void showLogoutDialog() {

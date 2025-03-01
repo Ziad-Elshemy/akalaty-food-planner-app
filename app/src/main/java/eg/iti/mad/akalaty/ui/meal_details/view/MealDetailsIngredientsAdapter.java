@@ -48,8 +48,8 @@ public class MealDetailsIngredientsAdapter extends RecyclerView.Adapter<MealDeta
         holder.txtIngredientName.setText(my_list.get(position).first);
         holder.txtIngredientMeasure.setText(my_list.get(position).second);
         Glide.with(context).load("https://www.themealdb.com/images/ingredients/"+my_list.get(position).first+"-Small.png")
-                .placeholder(R.drawable.ic_launcher_background)
-                .error(R.drawable.ic_launcher_foreground)
+                .placeholder(R.drawable.ic_logo)
+                .error(R.drawable.ic_logo)
                 .into(holder.imgIngredient);
 
         Log.i(TAG, "=========onBindViewHolder===========");

@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,8 +26,10 @@ import eg.iti.mad.akalaty.api.RemoteDataSource;
 import eg.iti.mad.akalaty.database.MealsLocalDataSource;
 import eg.iti.mad.akalaty.databinding.FragmentCalendarBinding;
 import eg.iti.mad.akalaty.model.PlannedMeal;
+import eg.iti.mad.akalaty.model.SingleMealItem;
 import eg.iti.mad.akalaty.repo.MealsRepo;
 import eg.iti.mad.akalaty.ui.calender.presenter.CalendarPresenter;
+import eg.iti.mad.akalaty.ui.favorites.view.MyFavFragmentDirections;
 import eg.iti.mad.akalaty.utils.Utils;
 
 
@@ -86,6 +89,12 @@ public class CalendarFragment extends Fragment implements IViewCalendarFragment,
     @Override
     public void onRemovePlannedClicked(PlannedMeal plannedMeal) {
         showDeletePopup(plannedMeal);
+    }
+
+    @Override
+    public void onItemClicked(SingleMealItem singleMealItem) {
+        CalendarFragmentDirections.ActionCalenderFragmentToMealDetailsFragment action = CalendarFragmentDirections.actionCalenderFragmentToMealDetailsFragment(singleMealItem.getIdMeal());
+        Navigation.findNavController(viewDataBinding.getRoot()).navigate(action);
     }
 
 

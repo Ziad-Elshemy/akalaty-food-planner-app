@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.CancellationSignal;
 import android.util.Log;
+import android.util.Pair;
 
 import androidx.annotation.NonNull;
 import androidx.credentials.Credential;
@@ -35,9 +36,13 @@ import eg.iti.mad.akalaty.auth.MyFirebaseAuth;
 import eg.iti.mad.akalaty.auth.OnLoginResponse;
 import eg.iti.mad.akalaty.auth.firestore.FirestoreUtils;
 import eg.iti.mad.akalaty.model.AppUser;
+import eg.iti.mad.akalaty.model.PlannedMeal;
 import eg.iti.mad.akalaty.model.SingleMealItem;
 import eg.iti.mad.akalaty.repo.MealsRepo;
 import eg.iti.mad.akalaty.ui.login.view.IViewLoginFragment;
+import eg.iti.mad.akalaty.utils.Constants;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -144,29 +149,49 @@ public class LoginPresenter implements ILoginPresenter {
     @Override
     public void downloadDataFromFirestore(String userId) {
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-        CollectionReference userFavoritesRef = firestore.collection("users").document(userId).collection("favorites");
+
+        CollectionReference userFavoritesRef = firestore.collection(Constants.USER_COLLECTION_NAME).document(userId).collection(Constants.FAVORITE_COLLECTION_NAME);
+        CollectionReference userPlannedMealsRef = firestore.collection(Constants.USER_COLLECTION_NAME).document(userId).collection(Constants.PLANNED_COLLECTION_NAME);
 
         disposables.add(
-                Single.fromCallable(() -> {
-                            List<SingleMealItem> mealList = new ArrayList<>();
-                            QuerySnapshot querySnapshot = Tasks.await(userFavoritesRef.get());
+                Single.zip(
+                                Single.fromCallable(() -> {
+                                    List<SingleMealItem> favMeals = new ArrayList<>();
+                                    QuerySnapshot favSnapshot = Tasks.await(userFavoritesRef.get());
+                                    for (DocumentSnapshot document : favSnapshot) {
+                                        SingleMealItem meal = document.toObject(SingleMealItem.class);
+                                        favMeals.add(meal);
+                                    }
+                                    return favMeals;
+                                }).subscribeOn(Schedulers.io()),
 
-                            for (DocumentSnapshot document : querySnapshot) {
-                                SingleMealItem meal = document.toObject(SingleMealItem.class);
-                                mealList.add(meal);
-                            }
-                            return mealList;
-                        })
+                                Single.fromCallable(() -> {
+                                    List<PlannedMeal> plannedMeals = new ArrayList<>();
+                                    QuerySnapshot plannedSnapshot = Tasks.await(userPlannedMealsRef.get());
+                                    for (DocumentSnapshot document : plannedSnapshot) {
+                                        PlannedMeal meal = document.toObject(PlannedMeal.class);
+                                        plannedMeals.add(meal);
+                                    }
+                                    return plannedMeals;
+                                }).subscribeOn(Schedulers.io()),
+
+                                (favMeals, plannedMeals) -> new Pair<>(favMeals, plannedMeals)
+                        )
                         .subscribeOn(Schedulers.io())
-                        .flatMapCompletable(mealList ->
-                                _repo.deleteAll()
-                                        .andThen(_repo.insertAllFav(mealList)))
+                        .flatMapCompletable(data ->
+                                Completable.concatArray(
+                                        _repo.deleteAllFav(),
+                                        _repo.deleteAllPlanned(),
+                                        _repo.insertAllFav(data.first),
+                                        _repo.insertAllPlanned(data.second)
+                                )
+                        )
+                        .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(() -> {
                             _view.showOnDataFetchedFromFirestore();
-                            Log.i(TAG, "Favorites stored in Room successfully");
+                            Log.i(TAG, "Favorites & Planned Meals stored in Room successfully");
                         }, throwable -> {
-//                            _view.showOnDownloadFailure("Error fetching or storing favorites");
-                            Log.e(TAG, "Error fetching or storing favorites", throwable);
+                            Log.e(TAG, "Error fetching or storing Favorites & Planned Meals", throwable);
                         })
         );
     }

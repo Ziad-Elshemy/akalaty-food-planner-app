@@ -50,17 +50,9 @@ public class MainActivity extends AppCompatActivity {
                 bottomNavigationView.setVisibility(View.VISIBLE);
             }
 
-//            if (navDestination.getId() == R.id.myFavFragment || navDestination.getId() == R.id.calenderFragment || navDestination.getId() == R.id.profileFragment ) {
-//                bottomNavigationView.setVisibility(View.GONE);
-//            } else {
-//                bottomNavigationView.setVisibility(View.VISIBLE);
-//            }
 
             if (!SharedPref.getInstance(this).getIsLogged()) {
-                Log.i(TAG, "onCreate: isLogged = false");
-                Log.i(TAG, "onCreate: id: "+SharedPref.getInstance(this).getUserId());
-                Log.i(TAG, "onCreate: user: "+SharedPref.getInstance(this).getUserName());
-                Log.i(TAG, "onCreate: email: "+SharedPref.getInstance(this).getUserEmail());
+
                 bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
                     if (item.getItemId() == R.id.myFavFragment || item.getItemId() == R.id.calenderFragment || item.getItemId() == R.id.profileFragment)
                         showLoginDialog();
@@ -123,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
 
         //internet connection
         if (!NetworkUtils.isInternetAvailable(this)) {
-            Toast.makeText(this, "No Internet", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "No Internet", Toast.LENGTH_SHORT).show();
         } else {
 //            Toast.makeText(this, "internet back", Toast.LENGTH_SHORT).show();
         }

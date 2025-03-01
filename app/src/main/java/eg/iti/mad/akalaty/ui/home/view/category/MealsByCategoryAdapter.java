@@ -69,7 +69,7 @@ public class MealsByCategoryAdapter extends RecyclerView.Adapter<MealsByCategory
                         return false;
                     }
                 })
-                .error(R.drawable.ic_launcher_foreground)
+                .error(R.drawable.ic_logo)
                 .into(holder.imgMeal);
         holder.layout.setOnClickListener(view -> {
             listener.onMealItemClicked(filteredMealsItem);

@@ -13,6 +13,7 @@ import eg.iti.mad.akalaty.model.PlannedMeal;
 import eg.iti.mad.akalaty.model.SingleMealItem;
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.core.Single;
 
 
 public class MealsLocalDataSource implements IMealsLocalDataSource{
@@ -60,7 +61,12 @@ public class MealsLocalDataSource implements IMealsLocalDataSource{
     }
 
     @Override
-    public Completable deleteAll() {
+    public Single<SingleMealItem> getMealById(String mealId) {
+        return favDao.getMealById(mealId);
+    }
+
+    @Override
+    public Completable deleteAllFav() {
         return favDao.deleteAll();
     }
 
@@ -84,6 +90,21 @@ public class MealsLocalDataSource implements IMealsLocalDataSource{
     @Override
     public Flowable<List<PlannedMeal>> getMealByDate(Date date) {
         return plannedDao.getMealsByDate(date);
+    }
+
+    @Override
+    public Single<PlannedMeal> getPlanedMealById(String mealId) {
+        return plannedDao.getMealById(mealId);
+    }
+
+    @Override
+    public Completable insertAllPlanned(List<PlannedMeal> plannedMealList) {
+        return plannedDao.insertAll(plannedMealList);
+    }
+
+    @Override
+    public Completable deleteAllPlanned() {
+        return plannedDao.deleteAll();
     }
 
 

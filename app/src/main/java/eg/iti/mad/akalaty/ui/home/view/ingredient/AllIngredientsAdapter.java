@@ -69,7 +69,7 @@ public class AllIngredientsAdapter extends RecyclerView.Adapter<AllIngredientsAd
                         return false;
                     }
                 })
-                .error(R.drawable.ic_launcher_foreground)
+                .error(R.drawable.ic_logo)
                 .into(holder.imgIngredient);
         holder.layout.setOnClickListener(view -> {
             listener.onIngredientItemClicked(categoriesItem);
