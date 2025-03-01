@@ -120,7 +120,7 @@ public class RegisterFragment extends Fragment implements IViewRegisterFragment,
             viewDataBinding.btnSignUp.setVisibility(View.INVISIBLE);
             viewDataBinding.cardGoogle.setVisibility(View.INVISIBLE);
             viewDataBinding.progressBarSignup.setVisibility(View.VISIBLE);
-            registerPresenter.signUpWithGoogle(requireContext(), credentialManager);
+            registerPresenter.signUpWithGoogle(requireContext(), credentialManager,this);
         });
 
     }
@@ -182,10 +182,9 @@ public class RegisterFragment extends Fragment implements IViewRegisterFragment,
             viewDataBinding.btnSignUp.setVisibility(View.VISIBLE);
             viewDataBinding.progressBarSignup.setVisibility(View.INVISIBLE);
             showRegisterSuccessPopup("Registered Successfully!");
-//            Navigation.findNavController(requireView()).navigate(R.id.action_registerFragment_to_loginFragment);
         }else {
             Log.i(TAG, "setOnRegisterResponse: "+msg);
-
+            viewDataBinding.cardGoogle.setVisibility(View.VISIBLE);
             viewDataBinding.progressBarSignup.setVisibility(View.INVISIBLE);
             showRegisterFailedDialog(msg);
         }
@@ -199,7 +198,7 @@ public class RegisterFragment extends Fragment implements IViewRegisterFragment,
         TextView txt = dialog.findViewById(R.id.txtGoodInfo);
         txt.setText(msg);
         Button ok = dialog.findViewById(R.id.btnGoodInfoOk);
-        ok.setText("Ok");
+        ok.setText(R.string.ok);
         ImageButton close = dialog.findViewById(R.id.btnGoodInfoClose);
 
         ok.setOnClickListener(new View.OnClickListener() {
@@ -228,7 +227,7 @@ public class RegisterFragment extends Fragment implements IViewRegisterFragment,
         TextView txt = dialog.findViewById(R.id.txtBadInfo);
         txt.setText(msg);
         Button tryAgain = dialog.findViewById(R.id.btnBadInfoOk);
-        tryAgain.setText("Try Again");
+        tryAgain.setText(R.string.try_again);
         ImageButton close = dialog.findViewById(R.id.btnBadInfoClose);
 
         tryAgain.setOnClickListener(new View.OnClickListener() {
@@ -250,24 +249,6 @@ public class RegisterFragment extends Fragment implements IViewRegisterFragment,
         dialog.show();
     }
 
-    private void saveUserToSharedPref(AppUser user) {
-
-        SharedPref.getInstance(requireActivity()).setIsLogged(true);
-        SharedPref.getInstance(requireActivity()).setUserId(user.getId());
-        SharedPref.getInstance(requireActivity()).setUserName(user.getUsername());
-        SharedPref.getInstance(requireActivity()).setUserEmail(user.getEmail());
-    }
-
-    @Override
-    public void showOnUserRegisterSuccessWithGoogle(AppUser appUser) {
-        Log.i(TAG, "showOnUserLoginSuccessWithGoogle: " + appUser.getEmail());
-        // now you can save your user and auto login
-        saveUserToSharedPref(appUser);
-        viewDataBinding.progressBarSignup.setVisibility(View.GONE);
-        Intent intent = new Intent(getActivity(), MainActivity.class);
-        startActivity(intent);
-        getActivity().finish();
-    }
 
     @Override
     public void showOnUserRegisterFailureWithGoogle(String errMsg) {

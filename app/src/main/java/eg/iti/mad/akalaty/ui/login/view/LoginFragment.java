@@ -55,8 +55,6 @@ public class LoginFragment extends Fragment implements OnLoginResponse, IViewLog
     private CredentialManager credentialManager;
     // [END declare_credential_manager]
 
-//    private static final int RC_SIGN_IN = 9001;
-//    private GoogleSignInClient googleSignInClient;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -111,7 +109,7 @@ public class LoginFragment extends Fragment implements OnLoginResponse, IViewLog
             viewDataBinding.btnLogin.setVisibility(View.INVISIBLE);
             viewDataBinding.cardGoogleLogin.setVisibility(View.INVISIBLE);
             viewDataBinding.progressBarLogin.setVisibility(View.VISIBLE);
-            loginPresenter.signInWithGoogle(requireContext(), credentialManager);
+            loginPresenter.signInWithGoogle(requireContext(), credentialManager,this);
         });
 
     }
@@ -192,7 +190,7 @@ public class LoginFragment extends Fragment implements OnLoginResponse, IViewLog
         TextView txt = dialog.findViewById(R.id.delete_txt);
         txt.setText(msg);
         Button createAccount = dialog.findViewById(R.id.btnAction);
-        createAccount.setText("Create Account");
+        createAccount.setText(R.string.create_account);
         Button cancel = dialog.findViewById(R.id.btnCancel);
         ImageButton close = dialog.findViewById(R.id.btnClose);
 
@@ -207,12 +205,18 @@ public class LoginFragment extends Fragment implements OnLoginResponse, IViewLog
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
+                viewDataBinding.btnLogin.setVisibility(View.VISIBLE);
+                viewDataBinding.cardGoogleLogin.setVisibility(View.VISIBLE);
+                viewDataBinding.progressBarLogin.setVisibility(View.INVISIBLE);
             }
         });
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
+                viewDataBinding.btnLogin.setVisibility(View.VISIBLE);
+                viewDataBinding.cardGoogleLogin.setVisibility(View.VISIBLE);
+                viewDataBinding.progressBarLogin.setVisibility(View.INVISIBLE);
             }
         });
 
@@ -237,18 +241,9 @@ public class LoginFragment extends Fragment implements OnLoginResponse, IViewLog
     @Override
     public void showOnUserLoginFailure(String errMsg) {
         Utils.showCustomSnackbar(requireView(), errMsg);
+        showLoginFailedPopup(errMsg);
     }
 
-    @Override
-    public void showOnUserLoginSuccessWithGoogle(AppUser appUser) {
-        Log.i(TAG, "showOnUserLoginSuccessWithGoogle: " + appUser.getEmail());
-        // now you can save your user and auto login
-        saveUserToSharedPref(appUser);
-        viewDataBinding.progressBarLogin.setVisibility(View.GONE);
-        Intent intent = new Intent(getActivity(), MainActivity.class);
-        startActivity(intent);
-        getActivity().finish();
-    }
 
     @Override
     public void showOnUserLoginFailureWithGoogle(String errMsg) {

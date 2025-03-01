@@ -87,6 +87,16 @@ public class CalendarFragment extends Fragment implements IViewCalendarFragment,
     }
 
     @Override
+    public void showOnDeleteSuccess(String msg) {
+        Utils.showCustomSnackbar(requireView(),getString(R.string.deleted_successfully));
+    }
+
+    @Override
+    public void showOnDeleteFailure(String errMsg) {
+        Utils.showCustomSnackbar(requireView(),errMsg);
+    }
+
+    @Override
     public void onRemovePlannedClicked(PlannedMeal plannedMeal) {
         showDeletePopup(plannedMeal);
     }
@@ -103,7 +113,7 @@ public class CalendarFragment extends Fragment implements IViewCalendarFragment,
         dialog.setContentView(R.layout.dialog_action_layout);
         dialog.getWindow().setBackgroundDrawableResource(R.color.md_theme_light_primaryContainer);
     TextView txt = dialog.findViewById(R.id.delete_txt);
-        txt.setText("Delete this item?");
+        txt.setText(R.string.delete_this_item_);
     Button delete = dialog.findViewById(R.id.btnAction);
     Button cancel = dialog.findViewById(R.id.btnCancel);
     ImageButton close = dialog.findViewById(R.id.btnClose);
@@ -113,21 +123,20 @@ public class CalendarFragment extends Fragment implements IViewCalendarFragment,
         public void onClick(View view) {
             dialog.dismiss();
             calendarPresenter.deleteFromCal(plannedMeal);
-            Utils.showCustomSnackbar(requireView(),"Deleted Successfully");
         }
     });
         close.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             dialog.dismiss();
-            Utils.showCustomSnackbar(requireView(),"Canceled");
+            Utils.showCustomSnackbar(requireView(),getString(R.string.canceled));
         }
     });
         cancel.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             dialog.dismiss();
-            Utils.showCustomSnackbar(requireView(),"Canceled");
+            Utils.showCustomSnackbar(requireView(),getString(R.string.canceled));
         }
     });
 

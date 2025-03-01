@@ -5,6 +5,8 @@ import static com.google.android.libraries.identity.googleid.GoogleIdTokenCreden
 import android.content.Context;
 import android.os.Bundle;
 import android.os.CancellationSignal;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.util.Pair;
 
@@ -68,11 +70,11 @@ public class LoginPresenter implements ILoginPresenter {
     }
 
     @Override
-    public void signInWithGoogle(Context context, CredentialManager credentialManager) {
-        launchSignInCredentialManager(context,credentialManager);
+    public void signInWithGoogle(Context context, CredentialManager credentialManager, OnLoginResponse onLoginResponse) {
+        launchSignInCredentialManager(context,credentialManager, onLoginResponse);
     }
 
-    public void launchSignInCredentialManager(Context context, CredentialManager credentialManager) {
+    public void launchSignInCredentialManager(Context context, CredentialManager credentialManager, OnLoginResponse onLoginResponse) {
         GetGoogleIdOption googleIdOption = new GetGoogleIdOption.Builder()
                 .setFilterByAuthorizedAccounts(true)
                 .setServerClientId(context.getString(R.string.client_id))
@@ -90,30 +92,31 @@ public class LoginPresenter implements ILoginPresenter {
                 new CredentialManagerCallback<>() {
                     @Override
                     public void onResult(GetCredentialResponse result) {
-                        handleSignIn(result.getCredential());
+                        handleSignIn(result.getCredential(), onLoginResponse);
                     }
 
                     @Override
                     public void onError(GetCredentialException e) {
-                        if (e.getLocalizedMessage().contains("Cannot find a matching credential")) {
-//                            loginView.navigateToSignUp();
-                            _view.showOnUserLoginFailureWithGoogle("Cannot find a matching credential");
-                        } else {
-//                            loginView.showError("Error signing in. Please try again.");
-                            _view.showOnUserLoginFailureWithGoogle("Error signing in. Please try again.");
-                        }
+                        new Handler(Looper.getMainLooper()).post(() -> {
+                            if (e.getLocalizedMessage().contains("Cannot find a matching credential")) {
+                                onLoginResponse.setOnLoginFailure("Cannot find a matching credential");
+                            } else {
+                                onLoginResponse.setOnLoginFailure("Error signing in. Please try again.");
+                            }
+                        });
+
                     }
                 }
         );
     }
 
-    private void handleSignIn(Credential credential) {
+    private void handleSignIn(Credential credential, OnLoginResponse onLoginResponse) {
         if (credential instanceof CustomCredential) {
             CustomCredential customCredential = (CustomCredential) credential;
             if (customCredential.getType().equals(TYPE_GOOGLE_ID_TOKEN_CREDENTIAL)) {
                 Bundle credentialData = customCredential.getData();
                 GoogleIdTokenCredential googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credentialData);
-                mAuth.firebaseAuthWithGoogle(googleIdTokenCredential.getIdToken(), _view);
+                mAuth.firebaseAuthSignInWithGoogle(googleIdTokenCredential.getIdToken(), onLoginResponse);
             } else {
 //                loginView.showError("Credential is not of type Google ID!");
                 _view.showOnUserLoginFailureWithGoogle("Credential is not of type Google ID!");

@@ -1,6 +1,7 @@
 package eg.iti.mad.akalaty.ui;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +13,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
+import androidx.navigation.NavOptions;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 
@@ -40,33 +42,37 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.fragmentContainerView);
         navController = navHostFragment.getNavController();
-        NavigationUI.setupWithNavController(bottomNavigationView,navController);
-//        //to add action bar do not forget to change the theme
-//        NavigationUI.setupActionBarWithNavController(this,navController);
+        NavigationUI.setupWithNavController(bottomNavigationView, navController);
+
         navController.addOnDestinationChangedListener((navController1, navDestination, bundle) -> {
-            if (navDestination.getId() == R.id.mealDetailsFragment || navDestination.getId() == R.id.loginFragment || navDestination.getId() == R.id.registerFragment ) {
+            if (navDestination.getId() == R.id.mealDetailsFragment ||
+                    navDestination.getId() == R.id.loginFragment ||
+                    navDestination.getId() == R.id.registerFragment) {
                 bottomNavigationView.setVisibility(View.GONE);
             } else {
                 bottomNavigationView.setVisibility(View.VISIBLE);
             }
+        });
 
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
 
             if (!SharedPref.getInstance(this).getIsLogged()) {
-
-                bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
-                    if (item.getItemId() == R.id.myFavFragment || item.getItemId() == R.id.calenderFragment || item.getItemId() == R.id.profileFragment)
-                        showLoginDialog();
-                    else {
-                        if (item.getItemId() == R.id.searchFragment)
-                            navController.navigate(R.id.searchFragment);
-                        else if (item.getItemId() == R.id.homeFragment)
-                            navController.navigate(R.id.homeFragment);
-                    }
-                    return true;
-                });
+                if (itemId == R.id.myFavFragment || itemId == R.id.calenderFragment || itemId == R.id.profileFragment) {
+                    showLoginDialog();
+                    return false;
+                }
             }
 
+            // Back Stack
+            navController.navigate(itemId, null, new NavOptions.Builder()
+                    .setLaunchSingleTop(true)
+                    .setPopUpTo(R.id.homeFragment, false)
+                    .build());
+
+            return true;
         });
+
 
 
     }
@@ -77,9 +83,9 @@ public class MainActivity extends AppCompatActivity {
         dialog.setContentView(R.layout.dialog_action_layout);
         dialog.getWindow().setBackgroundDrawableResource(R.color.md_theme_light_primaryContainer);
         TextView txt = dialog.findViewById(R.id.delete_txt);
-        txt.setText("Please Login First!");
+        txt.setText(R.string.please_login_first);
         Button login = dialog.findViewById(R.id.btnAction);
-        login.setText("Login");
+        login.setText(R.string.login);
         Button cancel = dialog.findViewById(R.id.btnCancel);
         ImageButton close = dialog.findViewById(R.id.btnClose);
 
@@ -88,9 +94,11 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 dialog.dismiss();
 
-                navController.navigate(R.id.loginFragment);
+//                navController.navigate(R.id.loginFragment);
+                Intent intent = new Intent(MainActivity.this, MainActivity.class);
+                startActivity(intent);
+                MainActivity.this.finish();
 
-//                Navigation.findNavController(view).navigate(R.id.action_profileFragment_to_loginFragment);
             }
         });
         close.setOnClickListener(new View.OnClickListener() {

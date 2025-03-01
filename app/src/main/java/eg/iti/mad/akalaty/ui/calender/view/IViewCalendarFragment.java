@@ -7,4 +7,8 @@ import eg.iti.mad.akalaty.model.SingleMealItem;
 
 public interface IViewCalendarFragment {
     public void showPlannedMeals(List<PlannedMeal> mealsList);
+
+    void showOnDeleteSuccess(String msg);
+
+    void showOnDeleteFailure(String errMsg);
 }
