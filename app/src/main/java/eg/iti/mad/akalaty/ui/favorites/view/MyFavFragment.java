@@ -100,7 +100,7 @@ public class MyFavFragment extends Fragment implements IViewMyFavFragment, OnIte
         dialog.setContentView(R.layout.dialog_action_layout);
         dialog.getWindow().setBackgroundDrawableResource(R.color.md_theme_light_primaryContainer);
         TextView txt = dialog.findViewById(R.id.delete_txt);
-        txt.setText("Delete this item?");
+        txt.setText(R.string.delete_this_item_);
         Button delete = dialog.findViewById(R.id.btnAction);
         Button cancel = dialog.findViewById(R.id.btnCancel);
         ImageButton close = dialog.findViewById(R.id.btnClose);
@@ -110,21 +110,21 @@ public class MyFavFragment extends Fragment implements IViewMyFavFragment, OnIte
             public void onClick(View view) {
                 dialog.dismiss();
                 favPresenter.deleteFromFav(singleMealItem);
-                Utils.showCustomSnackbar(requireView(),"Deleted Successfully");
+                Utils.showCustomSnackbar(requireView(),getString(R.string.deleted_successfully));
             }
         });
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
-                Utils.showCustomSnackbar(requireView(),"Canceled");
+                Utils.showCustomSnackbar(requireView(),getString(R.string.canceled));
             }
         });
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
-                Utils.showCustomSnackbar(requireView(),"Canceled");
+                Utils.showCustomSnackbar(requireView(),getString(R.string.canceled));
             }
         });
 

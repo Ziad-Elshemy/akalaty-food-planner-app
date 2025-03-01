@@ -47,7 +47,7 @@ public class FavPresenter implements IFavPresenter {
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(() -> {
-                            _view.showOnDeleteSuccess("Meal removed from favorites"); // تحديث الواجهة
+                            _view.showOnDeleteSuccess("Meal removed from favorites");
                             Log.i(TAG, "Meal deleted from Room successfully");
                         }, throwable -> {
                             _view.showOnDeleteFailure("Error deleting meal from favorites");

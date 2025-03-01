@@ -14,6 +14,9 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.TextView;
 
 import com.airbnb.lottie.LottieAnimationView;
 
@@ -25,6 +28,7 @@ import eg.iti.mad.akalaty.utils.SharedPref;
 public class SplashFragment extends Fragment {
 
     LottieAnimationView lottieAnimationView;
+    TextView txtAppName;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,6 +48,11 @@ public class SplashFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         lottieAnimationView = view.findViewById(R.id.lottieImg);
+        txtAppName = view.findViewById(R.id.txtAppName);
+
+        Animation scaleFromCenter = AnimationUtils.loadAnimation(requireActivity(), R.anim.splash_scale_up_from_center);
+        txtAppName.startAnimation(scaleFromCenter);
+        txtAppName.setVisibility(View.VISIBLE);
 
         lottieAnimationView.animate();
 
@@ -64,7 +73,7 @@ public class SplashFragment extends Fragment {
 
 
             }
-        },2000);
+        },4000);
 
     }
 }

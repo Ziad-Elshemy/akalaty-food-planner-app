@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">أكلاتي</string>
+    <string name="client_id">359306218945-g281uk7nfkkjt2c29kqgn9ofan73u4cd.apps.googleusercontent.com</string>
+    <!-- TODO: إزالة أو تغيير هذا النص التجريبي -->
+    <string name="hello_blank_fragment">مرحبًا، هذا جزء فارغ</string>
+    <string name="lorem">اكتشف وصفات جديدة ونظّم وجباتك الأسبوعية بسهولة</string>
+    <string name="food">أكلاتي</string>
+    <string name="onboarding_first_name">خطط <font color="#4CAF50">وجباتك</font> بكل سهولة!</string>
+    <string name="onboarding_second_name">ابحث، اكتشف، \nو <font color="#4CAF50">استمتع</font></string>
+    <string name="onboarding_third_name">احفظ <font color="#4CAF50">مفضلتك</font> ونظّم وجباتك</string>
+    <string name="food_description">وصف الطعام</string>
+    <string name="video_support">دعم الفيديو</string>
+    <string name="onboarding_first_desc">اكتشف وصفات جديدة ونظّم وجباتك الأسبوعية بكل سهولة.</string>
+    <string name="onboarding_second_desc">ابحث عن الوصفات حسب الفئة أو البلد أو المكونات واستلهم أفكارًا جديدة.</string>
+    <string name="onboarding_third_desc">احتفظ بوجباتك المفضلة وخطط لقائمتك الأسبوعية بسهولة.</string>
+    <string name="next">التالي</string>
+    <string name="get_started">ابدأ الآن</string>
+    <string name="type_your_password">أدخل كلمة المرور</string>
+    <string name="type_your_email">أدخل بريدك الإلكتروني</string>
+    <string name="password">كلمة المرور</string>
+    <string name="email_address">البريد الإلكتروني</string>
+    <string name="login">تسجيل الدخول</string>
+    <string name="or_login_with">أو، سجل الدخول باستخدام</string>
+    <string name="already_have_an_account_login">لديك حساب بالفعل؟ <font color="#9AD983">سجّل الدخول</font></string>
+    <string name="haven_t_account_register_now">ليس لديك حساب؟<font color="#9AD983"> سجل الآن</font></string>
+    <string name="sign_up">إنشاء حساب</string>
+    <string name="user_name">اسم المستخدم</string>
+    <string name="type_your_username">أدخل اسم المستخدم</string>
+    <string name="or_register_with_email">أو، سجل باستخدام البريد الإلكتروني</string>
+    <string name="string_meal_name">اسم الوجبة</string>
+    <string name="string_meal_category">فئة الوجبة</string>
+    <string name="category">الفئة</string>
+    <string name="meal_name">اسم الوجبة</string>
+    <string name="area">المنطقة</string>
+    <string name="ingredient">المكون</string>
+    <string name="search">بحث</string>
+    <string name="youtube">يوتيوب</string>
+    <string name="my_favorites">مفضلتي</string>
+    <string name="my_calender">تقويمي</string>
+    <string name="check_internet">يرجى التحقق من اتصال الإنترنت\nوالمحاولة مرة أخرى!</string>
+    <string name="no_internet_connection">لا يوجد اتصال بالإنترنت!</string>
+    <string name="log_out">تسجيل الخروج</string>
+    <string name="cancel">إلغاء</string>
+    <string name="delete">حذف</string>
+    <string name="delete_this_item">حذف هذا العنصر؟</string>
+    <string name="backup_your_data">نسخ بياناتك احتياطيًا</string>
+    <string name="your_favorite">مفضلتك</string>
+    <string name="download_data">تحميل البيانات</string>
+    <string name="your_plans">خططك</string>
+    <string name="skip">تخطي</string>
+    <string name="ok">موافق</string>
+    <string name="delete_this_item_">هل تريد حذف هذا العنصر؟</string>
+    <string name="please_login_first">يرجى تسجيل الدخول أولًا!</string>
+    <string name="create_account">إنشاء حساب</string>
+    <string name="are_you_sure_you_want_to_logout">هل أنت متأكد أنك \nتريد تسجيل الخروج؟</string>
+    <string name="try_again">حاول مرة أخرى</string>
+    <string name="deleted_successfully">تم الحذف بنجاح</string>
+    <string name="canceled">إنهاء</string>
+    <string name="added_to_favorite">تمت الاضافة للمفضلة</string>
+    <string name="removed">تم الحذف</string>
+    <string name="added_to_calender">تمت الاضافة للتقويم</string>
+    <string name="error_meal_details">خطأ في بيانات الوجبة</string>
+    <string name="akalaty">أكلاتي</string>
+</resources>

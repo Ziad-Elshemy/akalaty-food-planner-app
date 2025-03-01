@@ -49,4 +49,16 @@
     <string name="your_plans">Your Plans</string>
     <string name="skip">Skip</string>
     <string name="ok">Ok</string>
+    <string name="delete_this_item_">Delete this item?</string>
+    <string name="please_login_first">Please Login First!</string>
+    <string name="create_account">Create Account</string>
+    <string name="are_you_sure_you_want_to_logout">Are you sure you \nwant to logout?</string>
+    <string name="try_again">Try Again</string>
+    <string name="deleted_successfully">Deleted Successfully</string>
+    <string name="canceled">Canceled</string>
+    <string name="added_to_favorite">Added to favorite</string>
+    <string name="removed">Removed!</string>
+    <string name="added_to_calender">Added to calender</string>
+    <string name="error_meal_details">error meal details</string>
+    <string name="akalaty">Akalaty</string>
 </resources>

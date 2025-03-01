@@ -5,6 +5,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -59,6 +61,8 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHo
         holder.constraintLayout.setOnClickListener(view -> {
             listener.onItemClicked(plannedMeal.getMeal());
         });
+        Animation fromLeft = AnimationUtils.loadAnimation(context,R.anim.from_left_anim);
+        holder.constraintLayout.setAnimation(fromLeft);
         Log.i(TAG, "=========onBindViewHolder===========");
 
     }
