@@ -15,6 +15,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -170,21 +172,11 @@ public class HomeFragment extends Fragment implements IViewHomeFragment , OnCate
 
     @Override
     public void showRandomMeal(RandomMealsItem randomMealsItem) {
-
         SharedPref.getInstance(requireActivity()).setMealId(randomMealsItem.getIdMeal());
         SharedPref.getInstance(requireActivity()).setMealDate(calendar.getTime().getTime());
 
-        viewDataBinding.imgRandomMeal.setOnClickListener(view -> {
-            HomeFragmentDirections.ActionHomeFragmentToMealDetailsFragment action = HomeFragmentDirections.actionHomeFragmentToMealDetailsFragment(randomMealsItem.getIdMeal());
-            Navigation.findNavController(viewDataBinding.getRoot()).navigate(action);
-        });
-        viewDataBinding.imgMealDetails.setOnClickListener(view -> {
-            HomeFragmentDirections.ActionHomeFragmentToMealDetailsFragment action = HomeFragmentDirections.actionHomeFragmentToMealDetailsFragment(randomMealsItem.getIdMeal());
-            Navigation.findNavController(viewDataBinding.getRoot()).navigate(action);
-        });
+        viewDataBinding.imgRandomMeal.setVisibility(View.VISIBLE);
 
-//        Toast.makeText(getContext(), "getRandomMealDetails onResponse", Toast.LENGTH_SHORT).show();
-        viewDataBinding.lottieAnimationView.setVisibility(View.VISIBLE);
         Glide.with(requireActivity()).load(randomMealsItem.getStrMealThumb())
                 .listener(new RequestListener<Drawable>() {
                     @Override
@@ -196,30 +188,44 @@ public class HomeFragment extends Fragment implements IViewHomeFragment , OnCate
                     @Override
                     public boolean onResourceReady(@NonNull Drawable resource, @NonNull Object model, Target<Drawable> target, @NonNull DataSource dataSource, boolean isFirstResource) {
                         viewDataBinding.lottieAnimationView.setVisibility(View.GONE);
+
+                        Animation scaleFromCenter = AnimationUtils.loadAnimation(requireActivity(), R.anim.scale_up_from_center);
+                        viewDataBinding.imgRandomMeal.startAnimation(scaleFromCenter);
+
                         return false;
                     }
                 })
-//                .placeholder(R.drawable.ic_launcher_background)
                 .error(R.drawable.ic_logo)
                 .into(viewDataBinding.imgRandomMeal);
+
+        viewDataBinding.imgMealDetails.setOnClickListener(view -> {
+            HomeFragmentDirections.ActionHomeFragmentToMealDetailsFragment action =
+                    HomeFragmentDirections.actionHomeFragmentToMealDetailsFragment(randomMealsItem.getIdMeal());
+            Navigation.findNavController(viewDataBinding.getRoot()).navigate(action);
+        });
+
         viewDataBinding.imgMealArea.setImageResource(AreasImages.getAreaByName(randomMealsItem.getStrArea()));
         viewDataBinding.txtMealName.setText(randomMealsItem.getStrMeal());
         viewDataBinding.txtMealCat.setText(randomMealsItem.getStrCategory());
     }
 
+
     @Override
     public void showMealById(SingleMealItem singleMealItem) {
         viewDataBinding.imgRandomMeal.setOnClickListener(view -> {
-            HomeFragmentDirections.ActionHomeFragmentToMealDetailsFragment action = HomeFragmentDirections.actionHomeFragmentToMealDetailsFragment(singleMealItem.getIdMeal());
-            Navigation.findNavController(viewDataBinding.getRoot()).navigate(action);
-        });
-        viewDataBinding.imgMealDetails.setOnClickListener(view -> {
-            HomeFragmentDirections.ActionHomeFragmentToMealDetailsFragment action = HomeFragmentDirections.actionHomeFragmentToMealDetailsFragment(singleMealItem.getIdMeal());
+            HomeFragmentDirections.ActionHomeFragmentToMealDetailsFragment action =
+                    HomeFragmentDirections.actionHomeFragmentToMealDetailsFragment(singleMealItem.getIdMeal());
             Navigation.findNavController(viewDataBinding.getRoot()).navigate(action);
         });
 
-//        Toast.makeText(getContext(), "getRandomMealDetails onResponse", Toast.LENGTH_SHORT).show();
+        viewDataBinding.imgMealDetails.setOnClickListener(view -> {
+            HomeFragmentDirections.ActionHomeFragmentToMealDetailsFragment action =
+                    HomeFragmentDirections.actionHomeFragmentToMealDetailsFragment(singleMealItem.getIdMeal());
+            Navigation.findNavController(viewDataBinding.getRoot()).navigate(action);
+        });
+
         viewDataBinding.lottieAnimationView.setVisibility(View.VISIBLE);
+
         Glide.with(requireActivity()).load(singleMealItem.getStrMealThumb())
                 .listener(new RequestListener<Drawable>() {
                     @Override
@@ -231,16 +237,21 @@ public class HomeFragment extends Fragment implements IViewHomeFragment , OnCate
                     @Override
                     public boolean onResourceReady(@NonNull Drawable resource, @NonNull Object model, Target<Drawable> target, @NonNull DataSource dataSource, boolean isFirstResource) {
                         viewDataBinding.lottieAnimationView.setVisibility(View.GONE);
+
+                        Animation scaleFromCenter = AnimationUtils.loadAnimation(requireActivity(), R.anim.scale_up_from_center);
+                        viewDataBinding.imgRandomMeal.startAnimation(scaleFromCenter);
+
                         return false;
                     }
                 })
-//                .placeholder(R.drawable.ic_launcher_background)
                 .error(R.drawable.ic_logo)
                 .into(viewDataBinding.imgRandomMeal);
+
         viewDataBinding.imgMealArea.setImageResource(AreasImages.getAreaByName(singleMealItem.getStrArea()));
         viewDataBinding.txtMealName.setText(singleMealItem.getStrMeal());
         viewDataBinding.txtMealCat.setText(singleMealItem.getStrCategory());
     }
+
 
     @Override
     public void showAllCategories(List<CategoriesItem> categoriesItemList) {
