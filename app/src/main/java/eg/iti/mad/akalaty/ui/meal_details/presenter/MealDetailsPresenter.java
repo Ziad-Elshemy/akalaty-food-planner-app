@@ -65,7 +65,7 @@ public class MealDetailsPresenter implements IMealDetailsPresenter{
                             _view.showMealDetails(item);
                         },
                         error -> {
-                            _view.showErrorMsg(error.getLocalizedMessage());
+                            _view.showErrorMsg("data not in table");
                         }
                 );
     }
@@ -84,6 +84,21 @@ public class MealDetailsPresenter implements IMealDetailsPresenter{
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe();
+    }
+
+    @Override
+    public void getPlannedMealById(String mealId) {
+        _repo.getPlannedMealsById(mealId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        item -> {
+                            _view.showMealDetails(item.getMeal());
+                        },
+                        error -> {
+                            _view.showErrorMsg("data not in table");
+                        }
+                );
     }
 
     public void clearDisposables() {
