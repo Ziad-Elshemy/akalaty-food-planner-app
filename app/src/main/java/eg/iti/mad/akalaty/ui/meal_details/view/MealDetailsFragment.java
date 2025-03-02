@@ -98,7 +98,8 @@ public class MealDetailsFragment extends Fragment implements IViewMealDetailsFra
         if (NetworkUtils.isInternetAvailable(requireContext())) {
              mealDetailsPresenter.getOnlineMealById(mealId);
         } else {
-             mealDetailsPresenter.getFavMealById(mealId);
+            mealDetailsPresenter.getFavMealById(mealId);
+            mealDetailsPresenter.getPlannedMealById(mealId);
         }
     }
 
@@ -266,8 +267,10 @@ public class MealDetailsFragment extends Fragment implements IViewMealDetailsFra
 
     @Override
     public void showErrorMsg(String errorMsg) {
-//        Toast.makeText(requireContext(), "error meal details", Toast.LENGTH_SHORT).show();
-        Utils.showCustomSnackbar(requireView(),getString(R.string.error_meal_details));
+        if (!errorMsg.equals("data not in table")){
+            Utils.showCustomSnackbar(requireView(),errorMsg);
+        }
+
     }
 
 

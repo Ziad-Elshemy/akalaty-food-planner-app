@@ -5,5 +5,5 @@ import eg.iti.mad.akalaty.model.SingleMealItem;
 
 public interface OnRemovePlannedClickListener {
     void onRemovePlannedClicked(PlannedMeal plannedMeal);
-    void onItemClicked(SingleMealItem singleMealItem);
+    void onItemClicked(PlannedMeal plannedMeal);
 }

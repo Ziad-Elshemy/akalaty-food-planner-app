@@ -169,7 +169,7 @@ public class SearchFragment extends Fragment implements IViewSearchFragment,
         allCategoriesSearchAdapter.changeData(categoriesItemList);
         searchDisposables.add(
                 searchSubject
-                        .debounce(300, TimeUnit.MILLISECONDS)
+                        .debounce(500, TimeUnit.MILLISECONDS)
                         .map(String::toLowerCase)
                         .switchMap(query -> Observable.fromIterable(categoriesItemList)
                                 .filter(name -> name.getStrCategory().toLowerCase().contains(query))
@@ -203,7 +203,7 @@ public class SearchFragment extends Fragment implements IViewSearchFragment,
         allAreasSearchAdapter.changeData(areasItemList);
         searchDisposables.add(
                 searchSubject
-                        .debounce(300, TimeUnit.MILLISECONDS)
+                        .debounce(500, TimeUnit.MILLISECONDS)
                         .distinctUntilChanged()
                         .map(String::toLowerCase)
                         .switchMap(query -> Observable.fromIterable(areasItemList)
@@ -238,7 +238,7 @@ public class SearchFragment extends Fragment implements IViewSearchFragment,
         allIngredientsSearchAdapter.changeData(ingredientsItemList);
         searchDisposables.add(
                 searchSubject
-                        .debounce(300, TimeUnit.MILLISECONDS)
+                        .debounce(500, TimeUnit.MILLISECONDS)
                         .map(String::toLowerCase)
                         .switchMap(query -> Observable.fromIterable(ingredientsItemList)
                                 .filter(name -> name.getStrIngredient().toLowerCase().contains(query))
@@ -274,7 +274,7 @@ public class SearchFragment extends Fragment implements IViewSearchFragment,
         searchDisposables.clear();
         searchDisposables.add(
                 searchSubject
-                        .debounce(300, TimeUnit.MILLISECONDS)
+                        .debounce(500, TimeUnit.MILLISECONDS)
                         .map(String::toLowerCase)
                         .switchMap(query -> Observable.fromIterable(filteredMealsItems)
                                 .filter(name -> name.getStrMeal().toLowerCase().contains(query))
@@ -315,7 +315,7 @@ public class SearchFragment extends Fragment implements IViewSearchFragment,
         searchDisposables.clear();
         searchDisposables.add(
                 searchSubject
-                        .debounce(300, TimeUnit.MILLISECONDS)
+                        .debounce(500, TimeUnit.MILLISECONDS)
                         .map(String::toLowerCase)
                         .switchMap(query -> Observable.fromIterable(filteredMealsItems)
                                 .filter(name -> name.getStrMeal().toLowerCase().contains(query))
@@ -351,7 +351,7 @@ public class SearchFragment extends Fragment implements IViewSearchFragment,
         searchDisposables.clear();
         searchDisposables.add(
                 searchSubject
-                        .debounce(300, TimeUnit.MILLISECONDS)
+                        .debounce(500, TimeUnit.MILLISECONDS)
                         .map(String::toLowerCase)
                         .switchMap(query -> Observable.fromIterable(filteredMealsItems)
                                 .filter(name -> name.getStrMeal().toLowerCase().contains(query))
@@ -414,7 +414,7 @@ public class SearchFragment extends Fragment implements IViewSearchFragment,
         searchDisposables.clear();
         searchDisposables.add(
                 searchSubject
-                        .debounce(300, TimeUnit.MILLISECONDS)
+                        .debounce(500, TimeUnit.MILLISECONDS)
                         .distinctUntilChanged()
                         .subscribe(query -> presenter.getMealsBySearch(query))
         );

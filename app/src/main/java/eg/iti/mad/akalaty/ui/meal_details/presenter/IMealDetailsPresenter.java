@@ -14,6 +14,7 @@ public interface IMealDetailsPresenter {
     //planned
     void addMealToPlanned(PlannedMeal plannedMeal);
     void deleteMealFromPlanned(PlannedMeal plannedMeal);
+    void getPlannedMealById(String mealId);
 
 
 }
