@@ -30,6 +30,7 @@ import eg.iti.mad.akalaty.model.SingleMealItem;
 import eg.iti.mad.akalaty.repo.MealsRepo;
 import eg.iti.mad.akalaty.ui.calender.presenter.CalendarPresenter;
 import eg.iti.mad.akalaty.ui.favorites.view.MyFavFragmentDirections;
+import eg.iti.mad.akalaty.utils.NetworkUtils;
 import eg.iti.mad.akalaty.utils.Utils;
 
 
@@ -102,8 +103,14 @@ public class CalendarFragment extends Fragment implements IViewCalendarFragment,
     }
 
     @Override
-    public void onItemClicked(SingleMealItem singleMealItem) {
-        CalendarFragmentDirections.ActionCalenderFragmentToMealDetailsFragment action = CalendarFragmentDirections.actionCalenderFragmentToMealDetailsFragment(singleMealItem.getIdMeal());
+    public void onItemClicked(PlannedMeal plannedMeal) {
+        CalendarFragmentDirections.ActionCalenderFragmentToMealDetailsFragment action;
+        if (NetworkUtils.isInternetAvailable(requireContext())) {
+            action= CalendarFragmentDirections.actionCalenderFragmentToMealDetailsFragment(plannedMeal.getMeal().getIdMeal());
+        }else {
+            action = CalendarFragmentDirections.actionCalenderFragmentToMealDetailsFragment(plannedMeal.getId()+"");
+        }
+
         Navigation.findNavController(viewDataBinding.getRoot()).navigate(action);
     }
 

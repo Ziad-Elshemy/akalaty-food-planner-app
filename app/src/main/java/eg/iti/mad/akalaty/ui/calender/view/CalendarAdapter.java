@@ -59,7 +59,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHo
             listener.onRemovePlannedClicked(plannedMeal);
         });
         holder.constraintLayout.setOnClickListener(view -> {
-            listener.onItemClicked(plannedMeal.getMeal());
+            listener.onItemClicked(plannedMeal);
         });
         Animation fromLeft = AnimationUtils.loadAnimation(context,R.anim.from_left_anim);
         holder.constraintLayout.setAnimation(fromLeft);
