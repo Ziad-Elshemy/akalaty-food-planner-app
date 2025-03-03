@@ -33,6 +33,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import eg.iti.mad.akalaty.R;
+import eg.iti.mad.akalaty.auth.FirebaseDataSource;
 import eg.iti.mad.akalaty.ui.MainActivity;
 import eg.iti.mad.akalaty.utils.NetworkUtils;
 import eg.iti.mad.akalaty.utils.SharedPref;
@@ -87,7 +88,7 @@ public class MealDetailsFragment extends Fragment implements IViewMealDetailsFra
         mealDetailsInstructionsAdapter = new MealDetailsInstructionsAdapter(requireContext(),new ArrayList<>());
         viewDataBinding.recyclerViewMealIngredientsList.setAdapter(mealDetailsIngredientsAdapter);
         viewDataBinding.recyclerViewMealInstructionList.setAdapter(mealDetailsInstructionsAdapter);
-        mealDetailsPresenter = new MealDetailsPresenter(this, MealsRepo.getInstance(RemoteDataSource.getInstance(), MealsLocalDataSource.getInstance(requireContext())));
+        mealDetailsPresenter = new MealDetailsPresenter(this, MealsRepo.getInstance(RemoteDataSource.getInstance(), MealsLocalDataSource.getInstance(requireContext()), new FirebaseDataSource()));
 //        mealDetailsPresenter.getMailById(mealId);
         getMealDetails(mealId);
 

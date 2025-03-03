@@ -151,49 +151,15 @@ public class LoginPresenter implements ILoginPresenter {
 
     @Override
     public void downloadDataFromFirestore(String userId) {
-        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-
-        CollectionReference userFavoritesRef = firestore.collection(Constants.USER_COLLECTION_NAME).document(userId).collection(Constants.FAVORITE_COLLECTION_NAME);
-        CollectionReference userPlannedMealsRef = firestore.collection(Constants.USER_COLLECTION_NAME).document(userId).collection(Constants.PLANNED_COLLECTION_NAME);
-
         disposables.add(
-                Single.zip(
-                                Single.fromCallable(() -> {
-                                    List<SingleMealItem> favMeals = new ArrayList<>();
-                                    QuerySnapshot favSnapshot = Tasks.await(userFavoritesRef.get());
-                                    for (DocumentSnapshot document : favSnapshot) {
-                                        SingleMealItem meal = document.toObject(SingleMealItem.class);
-                                        favMeals.add(meal);
-                                    }
-                                    return favMeals;
-                                }).subscribeOn(Schedulers.io()),
-
-                                Single.fromCallable(() -> {
-                                    List<PlannedMeal> plannedMeals = new ArrayList<>();
-                                    QuerySnapshot plannedSnapshot = Tasks.await(userPlannedMealsRef.get());
-                                    for (DocumentSnapshot document : plannedSnapshot) {
-                                        PlannedMeal meal = document.toObject(PlannedMeal.class);
-                                        plannedMeals.add(meal);
-                                    }
-                                    return plannedMeals;
-                                }).subscribeOn(Schedulers.io()),
-
-                                (favMeals, plannedMeals) -> new Pair<>(favMeals, plannedMeals)
-                        )
+                _repo.downloadDataFromFirestore(userId)
                         .subscribeOn(Schedulers.io())
-                        .flatMapCompletable(data ->
-                                Completable.concatArray(
-                                        _repo.deleteAllFav(),
-                                        _repo.deleteAllPlanned(),
-                                        _repo.insertAllFav(data.first),
-                                        _repo.insertAllPlanned(data.second)
-                                )
-                        )
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(() -> {
                             _view.showOnDataFetchedFromFirestore();
                             Log.i(TAG, "Favorites & Planned Meals stored in Room successfully");
                         }, throwable -> {
+//                            _view.showOnDownloadFailure("Error fetching your data");
                             Log.e(TAG, "Error fetching or storing Favorites & Planned Meals", throwable);
                         })
         );
