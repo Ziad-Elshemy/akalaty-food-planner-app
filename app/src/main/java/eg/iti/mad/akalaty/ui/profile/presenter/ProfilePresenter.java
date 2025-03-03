@@ -52,68 +52,13 @@ public class ProfilePresenter implements IProfilePresenter {
 
     }
 
+
     @Override
     public void uploadDataToFirestore(String userId) {
-        Log.i(TAG, "uploadDataToFirestore: userId " + userId);
-        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-
-        CollectionReference userFavoritesRef = firestore.collection(Constants.USER_COLLECTION_NAME)
-                .document(userId).collection(Constants.FAVORITE_COLLECTION_NAME);
-
-        CollectionReference userPlannedMealsRef = firestore.collection(Constants.USER_COLLECTION_NAME)
-                .document(userId).collection(Constants.PLANNED_COLLECTION_NAME);
-
         disposables.add(
-                Single.zip(
-                                _repo.getAllStoredFavMeals().firstOrError().subscribeOn(Schedulers.io()),
-                                _repo.getAllStoredPlannedMeals().firstOrError().subscribeOn(Schedulers.io()),
-                                (favMeals, plannedMeals) -> new Pair<>(favMeals, plannedMeals)
-                        )
-                        .flatMapCompletable(data -> {
-                            List<SingleMealItem> favMeals = data.first;
-                            List<PlannedMeal> plannedMeals = data.second;
-
-                            return Completable.create(emitter -> {
-                                Task<Void> deleteFavsTask = userFavoritesRef.get()
-                                        .continueWithTask(task -> {
-                                            WriteBatch batch = firestore.batch();
-                                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                                batch.delete(document.getReference());
-                                            }
-                                            return batch.commit();
-                                        });
-
-                                Task<Void> deletePlannedMealsTask = userPlannedMealsRef.get()
-                                        .continueWithTask(task -> {
-                                            WriteBatch batch = firestore.batch();
-                                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                                batch.delete(document.getReference());
-                                            }
-                                            return batch.commit();
-                                        });
-
-                                Tasks.whenAllSuccess(deleteFavsTask, deletePlannedMealsTask)
-                                        .addOnSuccessListener(aVoid -> {
-                                            Completable favUpload = Observable.fromIterable(favMeals)
-                                                    .flatMapCompletable(meal -> Completable.create(innerEmitter -> {
-                                                        userFavoritesRef.document(meal.getIdMeal()).set(meal)
-                                                                .addOnSuccessListener(a -> innerEmitter.onComplete())
-                                                                .addOnFailureListener(innerEmitter::onError);
-                                                    }));
-
-                                            Completable plannedUpload = Observable.fromIterable(plannedMeals)
-                                                    .flatMapCompletable(meal -> Completable.create(innerEmitter -> {
-                                                        userPlannedMealsRef.document(meal.getMeal().getIdMeal()).set(meal)
-                                                                .addOnSuccessListener(a -> innerEmitter.onComplete())
-                                                                .addOnFailureListener(innerEmitter::onError);
-                                                    }));
-
-                                            Completable.mergeArray(favUpload, plannedUpload)
-                                                    .subscribe(emitter::onComplete, emitter::onError);
-                                        })
-                                        .addOnFailureListener(emitter::onError);
-                            });
-                        })
+                _repo.uploadDataToFirestore(userId)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(() -> {
                             _view.showOnUploadSuccess("Your data uploaded successfully");
                             Log.i(TAG, "Favorites & Planned Meals uploaded successfully to Firestore");
@@ -124,46 +69,12 @@ public class ProfilePresenter implements IProfilePresenter {
         );
     }
 
+
     @Override
     public void downloadDataFromFirestore(String userId) {
-        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-
-        CollectionReference userFavoritesRef = firestore.collection(Constants.USER_COLLECTION_NAME).document(userId).collection(Constants.FAVORITE_COLLECTION_NAME);
-        CollectionReference userPlannedMealsRef = firestore.collection(Constants.USER_COLLECTION_NAME).document(userId).collection(Constants.PLANNED_COLLECTION_NAME);
-
         disposables.add(
-                Single.zip(
-                                Single.fromCallable(() -> {
-                                    List<SingleMealItem> favMeals = new ArrayList<>();
-                                    QuerySnapshot favSnapshot = Tasks.await(userFavoritesRef.get());
-                                    for (DocumentSnapshot document : favSnapshot) {
-                                        SingleMealItem meal = document.toObject(SingleMealItem.class);
-                                        favMeals.add(meal);
-                                    }
-                                    return favMeals;
-                                }).subscribeOn(Schedulers.io()),
-
-                                Single.fromCallable(() -> {
-                                    List<PlannedMeal> plannedMeals = new ArrayList<>();
-                                    QuerySnapshot plannedSnapshot = Tasks.await(userPlannedMealsRef.get());
-                                    for (DocumentSnapshot document : plannedSnapshot) {
-                                        PlannedMeal meal = document.toObject(PlannedMeal.class);
-                                        plannedMeals.add(meal);
-                                    }
-                                    return plannedMeals;
-                                }).subscribeOn(Schedulers.io()),
-
-                                (favMeals, plannedMeals) -> new Pair<>(favMeals, plannedMeals)
-                        )
+                _repo.downloadDataFromFirestore(userId)
                         .subscribeOn(Schedulers.io())
-                        .flatMapCompletable(data ->
-                                Completable.concatArray(
-                                        _repo.deleteAllFav(),
-                                        _repo.deleteAllPlanned(),
-                                        _repo.insertAllFav(data.first),
-                                        _repo.insertAllPlanned(data.second)
-                                )
-                        )
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(() -> {
                             _view.showOnDownloadSuccess("Your Data fetched successfully");
@@ -174,7 +85,6 @@ public class ProfilePresenter implements IProfilePresenter {
                         })
         );
     }
-
 
 
     @Override

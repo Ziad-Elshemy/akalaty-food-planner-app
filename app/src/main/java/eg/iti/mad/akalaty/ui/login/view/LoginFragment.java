@@ -27,6 +27,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import eg.iti.mad.akalaty.R;
 import eg.iti.mad.akalaty.api.RemoteDataSource;
+import eg.iti.mad.akalaty.auth.FirebaseDataSource;
 import eg.iti.mad.akalaty.auth.OnLoginResponse;
 import eg.iti.mad.akalaty.database.MealsLocalDataSource;
 import eg.iti.mad.akalaty.databinding.FragmentLoginBinding;
@@ -92,7 +93,7 @@ public class LoginFragment extends Fragment implements OnLoginResponse, IViewLog
             Navigation.findNavController(requireView()).navigate(R.id.action_loginFragment_to_homeFragment);
         }
 
-        loginPresenter = new LoginPresenter(this, MealsRepo.getInstance(RemoteDataSource.getInstance(), MealsLocalDataSource.getInstance(requireContext())));
+        loginPresenter = new LoginPresenter(this, MealsRepo.getInstance(RemoteDataSource.getInstance(), MealsLocalDataSource.getInstance(requireContext()), new FirebaseDataSource()));
 
 
         viewDataBinding.txtToRegister.setOnClickListener(view1 -> {

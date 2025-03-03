@@ -26,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 
 import eg.iti.mad.akalaty.R;
 import eg.iti.mad.akalaty.api.RemoteDataSource;
+import eg.iti.mad.akalaty.auth.FirebaseDataSource;
 import eg.iti.mad.akalaty.database.MealsLocalDataSource;
 import eg.iti.mad.akalaty.databinding.FragmentSearchBinding;
 import eg.iti.mad.akalaty.model.AreasItem;
@@ -91,7 +92,7 @@ public class SearchFragment extends Fragment implements IViewSearchFragment,
         allAreasSearchAdapter = new AllAreasSearchAdapter(requireContext(),new ArrayList<>(),this);
         mealBySelectorSearchAdapter = new MealBySelectorSearchAdapter(requireContext(),new ArrayList<>(),this);
 
-        presenter = new SearchPresenter(this, MealsRepo.getInstance(RemoteDataSource.getInstance(), MealsLocalDataSource.getInstance(requireContext())));
+        presenter = new SearchPresenter(this, MealsRepo.getInstance(RemoteDataSource.getInstance(), MealsLocalDataSource.getInstance(requireContext()), new FirebaseDataSource()));
 
         setUpChoiceChip();
 

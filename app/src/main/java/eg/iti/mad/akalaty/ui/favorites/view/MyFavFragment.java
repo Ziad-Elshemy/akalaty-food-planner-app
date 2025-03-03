@@ -21,6 +21,7 @@ import java.util.List;
 
 import eg.iti.mad.akalaty.R;
 import eg.iti.mad.akalaty.api.RemoteDataSource;
+import eg.iti.mad.akalaty.auth.FirebaseDataSource;
 import eg.iti.mad.akalaty.database.MealsLocalDataSource;
 import eg.iti.mad.akalaty.databinding.FragmentMyFavBinding;
 import eg.iti.mad.akalaty.model.SingleMealItem;
@@ -62,7 +63,7 @@ public class MyFavFragment extends Fragment implements IViewMyFavFragment, OnIte
         super.onViewCreated(view, savedInstanceState);
         myFavAdapter = new MyFavAdapter(requireContext(),new ArrayList<>(),this);
         viewDataBinding.myFavRecyclerView.setAdapter(myFavAdapter);
-        favPresenter = new FavPresenter(this, MealsRepo.getInstance(RemoteDataSource.getInstance(), MealsLocalDataSource.getInstance(requireContext())));
+        favPresenter = new FavPresenter(this, MealsRepo.getInstance(RemoteDataSource.getInstance(), MealsLocalDataSource.getInstance(requireContext()), new FirebaseDataSource()));
         favPresenter.getStoredMeals();
 
     }
