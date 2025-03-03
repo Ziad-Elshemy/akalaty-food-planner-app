@@ -42,6 +42,7 @@ import java.util.concurrent.Executors;
 
 import eg.iti.mad.akalaty.R;
 import eg.iti.mad.akalaty.api.RemoteDataSource;
+import eg.iti.mad.akalaty.auth.FirebaseDataSource;
 import eg.iti.mad.akalaty.auth.MyFirebaseAuth;
 import eg.iti.mad.akalaty.database.MealsLocalDataSource;
 import eg.iti.mad.akalaty.databinding.FragmentRegisterBinding;
@@ -100,7 +101,7 @@ public class RegisterFragment extends Fragment implements IViewRegisterFragment,
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        registerPresenter = new RegisterPresenter(this, MealsRepo.getInstance(RemoteDataSource.getInstance(), MealsLocalDataSource.getInstance(requireContext())));
+        registerPresenter = new RegisterPresenter(this, MealsRepo.getInstance(RemoteDataSource.getInstance(), MealsLocalDataSource.getInstance(requireContext()), new FirebaseDataSource()));
 
         viewDataBinding.txtToLogin.setOnClickListener(view1 -> {
             Navigation.findNavController(view).navigate(R.id.action_registerFragment_to_loginFragment);

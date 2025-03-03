@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import eg.iti.mad.akalaty.api.RemoteDataSource;
+import eg.iti.mad.akalaty.auth.FirebaseDataSource;
 import eg.iti.mad.akalaty.database.MealsLocalDataSource;
 import eg.iti.mad.akalaty.model.AreasResponse;
 import eg.iti.mad.akalaty.model.CategoriesResponse;
@@ -18,21 +19,26 @@ import eg.iti.mad.akalaty.model.SingleMealItem;
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.schedulers.Schedulers;
+import android.util.Pair;
 
 public class MealsRepo implements IMealsRepo{
     RemoteDataSource remoteDataSource;
     MealsLocalDataSource mealsLocalDataSource;
 
+    FirebaseDataSource firebaseDataSource;
+
     private static MealsRepo repo = null;
 
-    private MealsRepo(RemoteDataSource remoteDataSource, MealsLocalDataSource mealsLocalDataSource){
+    private MealsRepo(RemoteDataSource remoteDataSource, MealsLocalDataSource mealsLocalDataSource, FirebaseDataSource firebaseDataSource){
         this.remoteDataSource = remoteDataSource;
         this.mealsLocalDataSource = mealsLocalDataSource;
+        this.firebaseDataSource = firebaseDataSource;
     }
 
-    public static MealsRepo getInstance(RemoteDataSource remoteDataSource, MealsLocalDataSource mealsLocalDataSource){
+    public static MealsRepo getInstance(RemoteDataSource remoteDataSource, MealsLocalDataSource mealsLocalDataSource, FirebaseDataSource firebaseDataSource){
         if (repo==null){
-            repo = new MealsRepo(remoteDataSource,mealsLocalDataSource);
+            repo = new MealsRepo(remoteDataSource,mealsLocalDataSource,firebaseDataSource);
         }
         return repo;
     }
@@ -154,4 +160,25 @@ public class MealsRepo implements IMealsRepo{
     public Completable deleteAllPlanned() {
         return mealsLocalDataSource.deleteAllPlanned();
     }
+
+
+    public Completable uploadDataToFirestore(String userId) {
+        return Single.zip(
+                mealsLocalDataSource.getAllMeals().firstOrError().subscribeOn(Schedulers.io()),
+                mealsLocalDataSource.getAllPlannedMeals().firstOrError().subscribeOn(Schedulers.io()),
+                (favMeals, plannedMeals) -> new Pair<>(favMeals, plannedMeals)
+        ).flatMapCompletable(data -> firebaseDataSource.uploadData(userId, data.first, data.second));
+    }
+
+    public Completable downloadDataFromFirestore(String userId) {
+        return firebaseDataSource.downloadUserData(userId)
+                .flatMapCompletable(data -> Completable.concatArray(
+                        mealsLocalDataSource.deleteAllFav(),
+                        mealsLocalDataSource.deleteAllPlanned(),
+                        mealsLocalDataSource.insertAll(data.first),
+                        mealsLocalDataSource.insertAllPlanned(data.second)
+                ));
+    }
+
+
 }

@@ -25,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 import eg.iti.mad.akalaty.R;
 import eg.iti.mad.akalaty.api.RemoteDataSource;
+import eg.iti.mad.akalaty.auth.FirebaseDataSource;
 import eg.iti.mad.akalaty.database.MealsLocalDataSource;
 import eg.iti.mad.akalaty.databinding.FragmentProfileBinding;
 import eg.iti.mad.akalaty.repo.MealsRepo;
@@ -63,7 +64,7 @@ public class ProfileFragment extends Fragment  implements IViewProfileFragment{
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         observeInternetStatus();
-        profilePresenter = new ProfilePresenter(this, MealsRepo.getInstance(RemoteDataSource.getInstance(), MealsLocalDataSource.getInstance(requireActivity())),requireContext());
+        profilePresenter = new ProfilePresenter(this, MealsRepo.getInstance(RemoteDataSource.getInstance(), MealsLocalDataSource.getInstance(requireActivity()), new FirebaseDataSource()),requireContext());
 
         viewDataBinding.txtUsername.setText(SharedPref.getInstance(requireActivity()).getUserName());
         viewDataBinding.txtEmail.setText(SharedPref.getInstance(requireActivity()).getUserEmail());

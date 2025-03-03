@@ -23,6 +23,7 @@ import java.util.List;
 
 import eg.iti.mad.akalaty.R;
 import eg.iti.mad.akalaty.api.RemoteDataSource;
+import eg.iti.mad.akalaty.auth.FirebaseDataSource;
 import eg.iti.mad.akalaty.database.MealsLocalDataSource;
 import eg.iti.mad.akalaty.databinding.FragmentCalendarBinding;
 import eg.iti.mad.akalaty.model.PlannedMeal;
@@ -63,7 +64,8 @@ public class CalendarFragment extends Fragment implements IViewCalendarFragment,
         clearCalenderTime();
         calendarAdapter = new CalendarAdapter(requireContext(),new ArrayList<>(),this);
         viewDataBinding.myCalRecyclerView.setAdapter(calendarAdapter);
-        calendarPresenter = new CalendarPresenter(this, MealsRepo.getInstance(RemoteDataSource.getInstance(), MealsLocalDataSource.getInstance(requireContext())));
+        calendarPresenter = new CalendarPresenter(this, MealsRepo.getInstance(RemoteDataSource.getInstance(),
+                MealsLocalDataSource.getInstance(requireContext()),new FirebaseDataSource()));
         calendarPresenter.getPlannedMealsByDate(calendar.getTime());
         Log.i(TAG, "calender1: "+ calendar.getTime().getTime());
         viewDataBinding.calendarView.setOnDateChangeListener((calendarView, year, month, day) -> {

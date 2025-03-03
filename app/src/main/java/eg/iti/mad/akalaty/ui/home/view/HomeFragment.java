@@ -32,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 
 import eg.iti.mad.akalaty.R;
 import eg.iti.mad.akalaty.api.RemoteDataSource;
+import eg.iti.mad.akalaty.auth.FirebaseDataSource;
 import eg.iti.mad.akalaty.database.MealsLocalDataSource;
 import eg.iti.mad.akalaty.databinding.FragmentHomeBinding;
 import eg.iti.mad.akalaty.model.AreasImages;
@@ -97,7 +98,7 @@ public class HomeFragment extends Fragment implements IViewHomeFragment , OnCate
 
         setAdapters();
 
-        homePresenter = new HomePresenter(this, MealsRepo.getInstance(RemoteDataSource.getInstance(), MealsLocalDataSource.getInstance(requireContext())));
+        homePresenter = new HomePresenter(this, MealsRepo.getInstance(RemoteDataSource.getInstance(), MealsLocalDataSource.getInstance(requireContext()), new FirebaseDataSource()));
 
     }
 
